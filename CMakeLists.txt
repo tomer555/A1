@@ -3,4 +3,4 @@ project(A1)
 
 set(CMAKE_CXX_STANDARD 11)
 
-add_executable(A1 src/main.cpp src/Restaurant.cpp)
+add_executable(A1 src/main.cpp src/Restaurant.cpp src/Table.cpp)
