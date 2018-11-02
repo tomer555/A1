@@ -12,11 +12,22 @@ class Restaurant{
 public:
 	Restaurant();
     Restaurant(const std::string &configFilePath);
+    Restaurant(const Restaurant &rest);
+    Restaurant(Restaurant &&rest);
+    Restaurant& operator=(const Restaurant& rest);
+    Restaurant& operator=(Restaurant&& rest);
     void start();
+    void clean();
+    void steal(Restaurant &rest);
+
+    void copy(const Restaurant& rest);
     int getNumOfTables() const;
     Table* getTable(int ind);
 	const std::vector<BaseAction*>& getActionsLog() const; // Return a reference to the history of actions
     std::vector<Dish>& getMenu();
+    virtual ~Restaurant();
+
+    int Parse(std::string &configFilePath);
 
 private:
     bool open;

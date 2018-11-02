@@ -7,6 +7,11 @@ using namespace std;
 Restaurant* backup = nullptr;
 
 int main(int argc, char** argv){
+std::string test="#number of tables\n6\n#tables description\n6,4,4,14,10,10\n#Menu\nBeer,ALC,50\nSalad,VEG,40";
+ Restaurant restaurant;
+ restaurant.Parse(test);
+
+/*
     if(argc!=2){
         std::cout << "usage: rest <config_path>" << std::endl;
         return 0;
@@ -18,5 +23,6 @@ int main(int argc, char** argv){
         delete backup;
         backup = nullptr;
     }
+     */
     return 0;
 }
