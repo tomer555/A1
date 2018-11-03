@@ -8,19 +8,6 @@
 //std::shared_ptr
 using namespace std;
 
-
-
-
-
-    //fields
-
-        //int* T_idC;
-        //int T_id;   //id of a table
-        //int capacity; //const number of seats per table, can i add a final over here if not existing on h file?
-        //bool open; //indicates whether a table is close/open
-        //vector <Customer*> customersList; //a list of customers per table
-        //vector <OrderPair> orderList; //a list of orders per table
-
     // a constructor+member initializer lists
 
     Table::Table (int t_capacity) : capacity(t_capacity){
@@ -141,4 +128,3 @@ using namespace std;
         }
 
 
-};
