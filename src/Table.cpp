@@ -8,77 +8,82 @@
 //std::shared_ptr
 using namespace std;
 
-class Table {
 
-    public:
+
+
 
     //fields
 
-        int* T_idC;
-        int T_id;   //id of a table
-        int capacity; //const number of seats per table, can i add a final over here if not existing on h file?
-        boolean open; //indicates whether a table is close/open
-        vector <Customer> customersList; //a list of customers per table
-        vector <OrderPair> orderList; //a list of orders per table
+        //int* T_idC;
+        //int T_id;   //id of a table
+        //int capacity; //const number of seats per table, can i add a final over here if not existing on h file?
+        //bool open; //indicates whether a table is close/open
+        //vector <Customer*> customersList; //a list of customers per table
+        //vector <OrderPair> orderList; //a list of orders per table
 
-    // a constructor
+    // a constructor+member initializer lists
 
-        Table():capacity(t_capacity){
-            (*T_id)++;
-            T_id=*T_idC;
+    Table::Table (int t_capacity) : capacity(t_capacity){
+          //table_C++;
+          //adding stuff
         }
 
     // a copy constructor
 
-        Table(const Table &other):capacity(other.t_capacity){
+    Table::Table (const Table & other){
+        //adding stuff
+    capacity=other.capacity;
 
         }
 
     // a destructor
 
-        ~Table(){
+    Table::virtual ~Table(){
+            //
+            //adding stuff
         }
 
     //functions
 
         //function that indicates whether a table is close/open
 
-        bool isOpen(){
+        bool Table::isOpen(){
 
             return open;
         }
 
         //returns a T_id value. i should hold a counter so i can count the tables and giving them an ID
+        //i need a global variable in restorant class
 
-        int GetTableIndex (){
+       /* int Table::GetTableIndex (){
 
-            return T_id;
+            return table_C;
 
         }
+*/
 
-
-        void closeTable(){
+        void Table::closeTable(){
 
             open=false;
         }
 
-        void openTable(){
+        void Table::openTable(){
 
         open=true;
         }
 
-        int getCapacity() const{
+        int Table::getCapacity() const{
 
             return capacity;
         }
 
         //data or at? i just want an access to the pair, then dish, then the dish's price
 
-        int getBill(){
+        int Table::getBill(){
             //is there a need for =0 ?
             int count=0;
             for (int i = 0; i <orderList.size() ; ++i) {
-               count=count+orderList.at(i).getPrice();
+               count=count+orderList.at(i).second.getPrice();
             }
             return count;
         }
@@ -86,47 +91,51 @@ class Table {
         //i want to add a custumer to the end of a vector
         // customersList.insert(*customer);
 
-        void addCustomer(Customer* customer){
+        void Table::addCustomer(Customer* customer){
 
-            auto ilist = {*customer};
-
-            customersList.insert(customersList.begin() +customersList.size()+1, ilist);
+            customersList.push_back(customer);
         }
 
 
-        void removeCustomer(int id){
+        void Table:: removeCustomer(int id){
 
             for (int i = 0; i < customersList.size(); ++i) {
-                if (customersList[i].getId()==id)
-                    customersList.erase(i);
+                if (customersList[i]->getId()==id)
+                    customersList.erase(customersList.begin()+i);
             }
 
         }
 
-        Customer* getCustomer(int id) {
+        Customer*  Table::getCustomer(int id) {
 
             for (int i = 0; i < customersList.size(); ++i) {
-                if (customersList[i] == id) return customersList[i];
+                if (customersList[i]->getId() == id) return customersList[i];
 
             }
         }
+        bool Table::isExisted(int id) {
 
-            std::vector<Customer*>& getCustomers(){
+            for (int i = 0; i < customersList.size(); ++i) {
+                if (customersList[i]->getId() == id) return true;
+    }
+        return false;
+}
 
-                return &customersList;
+            std::vector<Customer*>& Table:: getCustomers(){
+
+                return customersList;
 
             }
 
-            std::vector<OrderPair>& getOrders(){
+            std::vector<OrderPair>& Table::getOrders(){
 
-                return &orderList;
+                return orderList;
 
             }
 
 
             //a clarification is needed
-            void order(const std::vector<Dish> &menu){
-
+            void Table::order(const std::vector<Dish> &menu){
 
 
         }
