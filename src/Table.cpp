@@ -14,7 +14,8 @@ class Table {
 
     //fields
 
-        int* T_id; //id of a table
+        int* T_idC;
+        int T_id;   //id of a table
         int capacity; //const number of seats per table, can i add a final over here if not existing on h file?
         boolean open; //indicates whether a table is close/open
         vector <Customer> customersList; //a list of customers per table
@@ -24,6 +25,7 @@ class Table {
 
         Table():capacity(t_capacity){
             (*T_id)++;
+            T_id=*T_idC;
         }
 
     // a copy constructor
@@ -50,7 +52,7 @@ class Table {
 
         int GetTableIndex (){
 
-            return *T_id;
+            return T_id;
 
         }
 
