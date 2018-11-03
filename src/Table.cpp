@@ -70,28 +70,64 @@ class Table {
             return capacity;
         }
 
-        //.capacity means each pair's data
+        //data or at? i just want an access to the pair, then dish, then the dish's price
+
         int getBill(){
             //is there a need for =0 ?
             int count=0;
             for (int i = 0; i <orderList.size() ; ++i) {
-               count=count+orderList.capacity(i).getPrice();
+               count=count+orderList.at(i).getPrice();
             }
             return count;
         }
 
+        //i want to add a custumer to the end of a vector
+        // customersList.insert(*customer);
 
-//    void addCustomer(Customer* customer);
-//    void removeCustomer(int id);
-//    Customer* getCustomer(int id);
-//    std::vector<Customer*>& getCustomers();
-//    std::vector<OrderPair>& getOrders();
-//    void order(const std::vector<Dish> &menu);
+        void addCustomer(Customer* customer){
+
+            auto ilist = {*customer};
+
+            customersList.insert(customersList.begin() +customersList.size()+1, ilist);
+        }
+
+
+        void removeCustomer(int id){
+
+            for (int i = 0; i < customersList.size(); ++i) {
+                if (customersList[i].getId()==id)
+                    customersList.erase(i);
+            }
+
+        }
+
+        Customer* getCustomer(int id) {
+
+            for (int i = 0; i < customersList.size(); ++i) {
+                if (customersList[i] == id) return customersList[i];
+
+            }
+        }
+
+            std::vector<Customer*>& getCustomers(){
+
+                return &customersList;
+
+            }
+
+            std::vector<OrderPair>& getOrders(){
+
+                return &orderList;
+
+            }
+
+
+            //a clarification is needed
+            void order(const std::vector<Dish> &menu){
 
 
 
-
-
+        }
 
 
 };
