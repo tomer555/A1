@@ -31,6 +31,7 @@ public:
 
 private:
     bool open;
+    int table_c;
     std::vector<Table*> tables;
     std::vector<Dish> menu;
     std::vector<BaseAction*> actionsLog;

@@ -5,11 +5,11 @@
 
 
 //Empty constructor
-Restaurant::Restaurant():open(true),tables(),actionsLog(),menu(){}
+Restaurant::Restaurant():open(true),tables(),actionsLog(),menu(),table_c(0){}
 
 
 //constructor
-Restaurant::Restaurant(const std::string &configFilePath):open(true),actionsLog() {
+Restaurant::Restaurant(const std::string &configFilePath):open(true),actionsLog(),table_c(0) {
 
 
 }
@@ -18,6 +18,8 @@ Restaurant::Restaurant(const std::string &configFilePath):open(true),actionsLog(
 Restaurant::Restaurant(const Restaurant &rest):tables(rest.tables),actionsLog(rest.actionsLog){
     menu=rest.menu;
     open=rest.open;
+    table_c=rest.table_c;
+
 
 }
 
