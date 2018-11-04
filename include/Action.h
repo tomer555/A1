@@ -19,14 +19,19 @@ public:
     ActionStatus getStatus() const;
     virtual void act(Restaurant& restaurant)=0;
     virtual std::string toString() const=0;
+	std::string getErrorMsg() const; //**********originally was under Protected but it doesn't make sense
+	std::string getActionArgs() const;
+
+	void setActionArgs(std::string toSet);
 
 protected:
     bool validTable(Table* table)const;
     void complete();
     void error(std::string errorMsg);
-    std::string getErrorMsg() const;
+
 private:
-    std::string errorMsg;
+	std::string errorMsg;
+    std::string ActionArgs;
     ActionStatus status;
 };
 
@@ -35,6 +40,7 @@ class OpenTable : public BaseAction {
 public:
     OpenTable(int id, std::vector<Customer *> &customersList);
     void act(Restaurant &restaurant);
+	void setArgs(int id, std::vector<Customer *> &customersList);
     std::string toString() const;
 
 private:

@@ -8,7 +8,7 @@
 
 //----------------------BaseAction------------------------------------
 //Empty Constructor
-BaseAction::BaseAction(): status(PENDING),errorMsg(nullptr){}
+BaseAction::BaseAction(): status(PENDING),errorMsg(nullptr),ActionArgs(""){}
 
 //Return the Action's status
 ActionStatus BaseAction:: getStatus() const{
@@ -30,6 +30,16 @@ void BaseAction:: error(std::string errorMsg){
     this->errorMsg=std::move(errorMsg);
 }
 
+void BaseAction::setActionArgs(std::string toSet) {
+    this->ActionArgs=std::move(toSet);
+
+}
+
+std::string BaseAction::getActionArgs()const {
+    return  this->ActionArgs;
+
+}
+
 bool BaseAction ::validTable(Table *table) const {
     bool output= true;
     if(table== nullptr || !dynamic_cast<Table*>(table) ){//Pointer check and Type check Table
@@ -40,7 +50,21 @@ bool BaseAction ::validTable(Table *table) const {
 //-----------------------------OpenTable------------------------------
 
 //Constructor OpenTable
-OpenTable ::OpenTable(int id, std::vector<Customer *> &customersList):BaseAction(),tableId(id),customers(customersList){}
+OpenTable ::OpenTable(int id, std::vector<Customer *> &customersList):BaseAction(),tableId(id),customers(customersList){
+
+
+}
+
+void OpenTable::setArgs (int id, std::vector<Customer *> &customersList){
+    std:: stringstream s1;
+    std:: string  output;
+    s1 <<id;
+    output=s1.str();
+    for(int i =0 ; i<customersList.size();i++){
+        output+=customersList[i]->toString();
+    }
+    setActionArgs(output);
+}
 
 void OpenTable ::act(Restaurant &restaurant){
     Table *temp=restaurant.getTable(tableId);
@@ -89,7 +113,9 @@ std::string OpenTable :: toString() const{
 //---------------------------------Order-----------------------------------
 
 //Constructor Order
-Order ::Order(int id):BaseAction(),tableId(id){}
+Order ::Order(int id):BaseAction(),tableId(id){
+    setActionArgs(std::to_string(id));
+}
 
 void Order ::act(Restaurant &restaurant){
     Table *temp=restaurant.getTable(tableId);
@@ -112,7 +138,10 @@ std::string Order :: toString() const {
 
 //---------------------------------MoveCustomer-----------------------------------
 
-MoveCustomer ::MoveCustomer(int src, int dst, int customerId):BaseAction(),srcTable(src),dstTable(dst),id(customerId){}
+MoveCustomer ::MoveCustomer(int src, int dst, int customerId):BaseAction(),srcTable(src),dstTable(dst),id(customerId){
+    std ::string output=std::to_string(src)+" "+std::to_string(dst)+" "+std::to_string(customerId);
+    setActionArgs(output);
+}
 
 void MoveCustomer ::act(Restaurant &restaurant) {
     Table *temp_src = restaurant.getTable(srcTable);
@@ -127,7 +156,7 @@ void MoveCustomer ::act(Restaurant &restaurant) {
             BaseAction *close = new Close(srcTable);
             (*close).act(restaurant);//activate close
             restaurant.addBaseAction(close);//add Close action to actionLog
-            //were should the close function be? we need to have a record of close in vectors BaseAction/
+
         } else
             this->error("Cannot move Customer");
     }
@@ -152,12 +181,16 @@ bool MoveCustomer :: validCustomer(Customer *customer,Table* src_T) const {
 //------------------------------------------Close--------------------------------------------
 
 //Constructor Order
-Close ::Close(int id): BaseAction(),tableId(id){}
+Close ::Close(int id): BaseAction(),tableId(id){
+    setActionArgs(std::to_string(id));
+}
 
 void Close ::act(Restaurant &restaurant){
     Table *temp=restaurant.getTable(tableId);
     if(validTable(temp)&& (*temp).isOpen() ) { //valid check and open check
-        (*temp).closeTable();//should print bill and then reopen the table
+        std::cout<<"Table "<<tableId<<" was closed. Bill "<<(*temp).getBill()<<"NIS";
+        (*temp).closeTable();
+        (*temp).openTable();
         this->complete();
     }
     else
@@ -174,7 +207,9 @@ std::string Close :: toString() const {
 
 //-----------------------------CloseAll------------------------------------------------------
 //Constructor Order
-CloseAll ::CloseAll(): BaseAction(){}
+CloseAll ::CloseAll(): BaseAction(){
+
+}
 
 void CloseAll ::act(Restaurant &restaurant) {
     std::vector<Table *> Table_vec = restaurant.getTables();
@@ -219,7 +254,9 @@ std::string PrintMenu :: toString() const{
 
 
 //--------------------------printTableStatus-------------------------------------------
-PrintTableStatus ::PrintTableStatus(int id): BaseAction() ,tableId(id){}
+PrintTableStatus ::PrintTableStatus(int id): BaseAction() ,tableId(id){
+    setActionArgs(std::to_string(id));
+}
 
 void PrintTableStatus ::act(Restaurant &restaurant) {
     Table *temp = restaurant.getTable(tableId);
@@ -268,9 +305,9 @@ void PrintActionsLog ::act(Restaurant &restaurant) {
     std::vector<BaseAction*> actions = restaurant.getActionsLog();
     for (int i = 0; i < actions.size(); i++) {
         if(actions[i]->getStatus()==ERROR){
-            std::cout <<actions[i]->toString()<<"Action args"<< actions[i]->getErrorMsg()<<"\n";
+            std::cout <<actions[i]->toString()<<" "<<actions[i]->getActionArgs()<<" "<< actions[i]->getErrorMsg()<<"\n";
         } else
-            std::cout <<actions[i]->toString()<<"Action args"<< actions[i]->getStatus()<<"\n";
+            std::cout <<actions[i]->toString()<<" "<<actions[i]->getActionArgs()<<" "<< actions[i]->getStatus()<<"\n";
     }
     this->complete();
 }
