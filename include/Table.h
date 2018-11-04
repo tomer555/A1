@@ -12,6 +12,16 @@ public:
     Table(int t_capacity);
     Table(const Table &other);
     virtual ~Table();
+
+    Table(Table &&other);
+    void steal(Table &other);
+    Table & operator=(const Table& other);
+    void copy(const Table & rest);
+    Table & operator=(Table&& other);
+    void clean();
+
+
+
     int getCapacity() const;
     void addCustomer(Customer* customer);
     void removeCustomer(int id);

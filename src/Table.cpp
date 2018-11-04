@@ -10,27 +10,93 @@ using namespace std;
 
     // a constructor+member initializer lists
 
-    Table::Table (int t_capacity) : capacity(t_capacity){
+    Table::Table (int t_capacity) : capacity(t_capacity),orderList(),customersList(),open(){
+        openTable();
           //table_C++;
-          //adding stuff
         }
 
     // a copy constructor
 
-    Table::Table (const Table & other){
-        //adding stuff
-    capacity=other.capacity;
+    Table::Table (const Table & other):capacity(other.capacity){
+        orderList=other.orderList;
+        customersList=other.customersList;
+        open=other.open;
 
         }
 
-    // a destructor
+//why is the '&&' for?
 
-    Table:: ~Table(){
-            //
-            //adding stuff
-        }
+//Move constructor
+Table::Table(Table &&other) {
+    steal(other);
+}
 
-    //functions
+void Table::steal(Table &other) {
+    open=other.open;
+    customersList = std::move(other.customersList);
+    orderList=other.orderList;
+    // missing delete rest vectors
+
+}
+
+//Copy Assignment Operator
+Table & Table:: operator=(const Table& other)  {
+    // check for "self assignment" and do nothing in that case
+    if (this == &other) {
+        return *this;
+    }
+    clean();
+    copy(other);
+    return *this;
+}
+
+
+//Move Assignment Operator
+Table & Table:: operator=(Table&& other) {
+    clean();
+    steal(other);
+    return *this;
+}
+
+
+//---------------------------Destructor and Cleaners------------------
+
+// a destructor
+Table:: ~Table(){
+    clean();
+}
+
+//Cleans all Restaurant fields
+void Table::clean()  {
+
+    for(int i=0;i<customersList.size();i++){ // Clean customers
+        delete customersList[i];
+        customersList[i]= nullptr;
+    }
+
+    orderList.clear(); // clean orders
+
+}
+
+
+//----------------------------Copy---------------------------------------
+
+//Copy 'rest' fields into 'this'
+void Table::copy(const Table & other)  {
+
+    this->orderList.resize(other.orderList.size()); // Copy orders
+    for(int i=0;i<other.orderList.size();i++){
+
+//something about the pair type
+        this->orderList[i]=other.orderList[i];
+    }
+
+    this->customersList.resize(other.customersList.size()); // Copy customers
+    this->customersList=other.customersList;
+
+}
+
+    //************************functions*************************************************
 
         //function that indicates whether a table is close/open
 
