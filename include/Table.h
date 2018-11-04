@@ -11,6 +11,7 @@ class Table{
 public:
     Table(int t_capacity);
     Table(const Table &other);
+    virtual ~Table();
     int getCapacity() const;
     void addCustomer(Customer* customer);
     void removeCustomer(int id);

@@ -25,7 +25,7 @@ using namespace std;
 
     // a destructor
 
-    Table::virtual ~Table(){
+    Table:: ~Table(){
             //
             //adding stuff
         }
