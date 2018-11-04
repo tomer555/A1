@@ -8,6 +8,8 @@
 //std::shared_ptr
 using namespace std;
 
+//-------------------------Constructors-------------------------------
+
     // a constructor+member initializer lists
 
     Table::Table (int t_capacity) : capacity(t_capacity),orderList(),customersList(),open(){
@@ -26,75 +28,73 @@ using namespace std;
 
 //why is the '&&' for?
 
-//Move constructor
-Table::Table(Table &&other) {
-    steal(other);
-}
+    //Move constructor
+    Table::Table(Table &&other) {
+        steal(other);
+    }
 
-void Table::steal(Table &other) {
-    open=other.open;
-    customersList = std::move(other.customersList);
-    orderList=other.orderList;
+    //steal function
+    void Table::steal(Table &other) {
+        open=other.open;
+        customersList = std::move(other.customersList);
+        orderList=other.orderList;
     // missing delete rest vectors
 
-}
+    }
 
-//Copy Assignment Operator
-Table & Table:: operator=(const Table& other)  {
+    //Copy Assignment Operator
+    Table & Table:: operator=(const Table& other)  {
     // check for "self assignment" and do nothing in that case
-    if (this == &other) {
+        if (this == &other) {
+        return *this;
+        }
+        clean();
+        copy(other);
         return *this;
     }
-    clean();
-    copy(other);
-    return *this;
-}
 
 
-//Move Assignment Operator
-Table & Table:: operator=(Table&& other) {
-    clean();
-    steal(other);
-    return *this;
-}
+    //Move Assignment Operator
+    Table & Table:: operator=(Table&& other) {
+        clean();
+        steal(other);
+        return *this;
+    }
 
 
 //---------------------------Destructor and Cleaners------------------
 
-// a destructor
-Table:: ~Table(){
-    clean();
-}
-
-//Cleans all Restaurant fields
-void Table::clean()  {
-
-    for(int i=0;i<customersList.size();i++){ // Clean customers
-        delete customersList[i];
-        customersList[i]= nullptr;
+    // a destructor
+    Table:: ~Table(){
+        clean();
     }
 
-    orderList.clear(); // clean orders
-
-}
+    //Cleans all Restaurant fields
+    void Table::clean()  {
+        for(int i=0;i<customersList.size();i++){ // Clean customers
+            delete customersList[i];
+            customersList[i]= nullptr;
+        }
+        orderList.clear(); // clean orders
+    }
 
 
 //----------------------------Copy---------------------------------------
 
-//Copy 'rest' fields into 'this'
-void Table::copy(const Table & other)  {
+    //Copy 'rest' fields into 'this'
+    void Table::copy(const Table & other)  {
 
-    this->orderList.resize(other.orderList.size()); // Copy orders
-    for(int i=0;i<other.orderList.size();i++){
+        this->orderList.resize(other.orderList.size()); // Copy orders
+        for(int i=0;i<other.orderList.size();i++){
 
-//something about the pair type
-        this->orderList[i]=other.orderList[i];
+    //something about the pair type
+            this->orderList[i]=other.orderList[i];
+        }
+
+        this->customersList.resize(other.customersList.size()); // Copy customers
+        this->customersList=other.customersList;
+
     }
-
-    this->customersList.resize(other.customersList.size()); // Copy customers
-    this->customersList=other.customersList;
-
-}
 
     //************************functions*************************************************
 
@@ -105,15 +105,8 @@ void Table::copy(const Table & other)  {
             return open;
         }
 
-        //returns a T_id value. i should hold a counter so i can count the tables and giving them an ID
-        //i need a global variable in restorant class
-
-       /* int Table::GetTableIndex (){
-
-            return table_C;
-
-        }
-*/
+        /*returns a T_id value. i should hold a counter so i can count the tables and giving them an ID
+        i need a global variable in restorant class*/
 
        int Table::getTableIndex() const {
 
