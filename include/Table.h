@@ -12,6 +12,14 @@ public:
     Table(int t_capacity);
     Table(const Table &other);
     virtual ~Table();
+
+    Table(Table &&other);
+    void steal(Table &other);
+    Table & operator=(const Table& other);
+    void copy(const Table & rest);
+    Table & operator=(Table&& other);
+    void clean();
+
     int getCapacity() const;
     void addCustomer(Customer* customer);
     void removeCustomer(int id);
@@ -24,12 +32,9 @@ public:
     void closeTable();
     int getBill();
     bool isOpen();
-    int getTableIndex() const;
 private:
     int capacity;
     bool open;
-    int* T_idC;
-    int T_id;   //id of a table
     std::vector<Customer*> customersList;
     std::vector<OrderPair> orderList; //A list of pairs for each order in a table - (customer_id, Dish)
 };
