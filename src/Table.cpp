@@ -84,19 +84,18 @@ using namespace std;
     //Copy 'rest' fields into 'this'
     void Table::copy(const Table & other)  {
 
-        this->orderList.resize(other.orderList.size()); // Copy orders
-        for(int i=0;i<other.orderList.size();i++){
-
+        this->customersList.resize(other.customersList.size()); // Copy orders
+        for(int i=0;i<other.customersList.size();i++){
     //something about the pair type
-            this->orderList[i]=other.orderList[i];
+            this->customersList[i]=other.customersList[i];
         }
 
-        this->customersList.resize(other.customersList.size()); // Copy customers
-        this->customersList=other.customersList;
+        this->orderList.resize(other.orderList.size()); // Copy customers
+        this->orderList=other.orderList;
 
     }
 
-    //************************functions*************************************************
+//************************functions****************************************
 
         //function that indicates whether a table is close/open
 
@@ -104,14 +103,6 @@ using namespace std;
 
             return open;
         }
-
-        /*returns a T_id value. i should hold a counter so i can count the tables and giving them an ID
-        i need a global variable in restorant class*/
-
-       int Table::getTableIndex() const {
-
-           return T_id;
-       }
 
         void Table::closeTable(){
 
@@ -187,8 +178,16 @@ using namespace std;
 
             //a clarification is needed
             void Table::order(const std::vector<Dish> &menu){
+                //when you do table.order() it can call customer.order(menu) for all the customers at the table
+                for (int i = 0; i <customersList.size() ; ++i) {
+                    for (int j = 0; j < customersList[i]->order(menu).size(); ++j) {
+                        OrderPair p(i,menu[customersList[i]->order(menu)[j]]);
+                        orderList.push_back(p);
+                    }
+                }
+                }
 
 
-        }
+
 
 
