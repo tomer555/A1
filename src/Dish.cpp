@@ -1,4 +1,5 @@
 
+#include <sstream>
 #include "../include/Dish.h"
 
 //Constructor- Memory  initialization
@@ -25,4 +26,10 @@ int Dish :: getPrice() const{
 
 DishType Dish:: getType() const{
     return this->type;
+}
+
+std::string Dish :: toString() const{
+    std::stringstream s1;
+    s1 <<name<<" "<<type<<price<<"NIS";
+    return s1.str();
 }

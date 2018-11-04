@@ -19,11 +19,12 @@ public:
     void start();
     void clean();
     void steal(Restaurant &rest);
-
+    void addBaseAction(BaseAction* baseAction);
     void copy(const Restaurant& rest);
     int getNumOfTables() const;
     Table* getTable(int ind);
 	const std::vector<BaseAction*>& getActionsLog() const; // Return a reference to the history of actions
+    const std::vector<Table*>& getTables() const; // Return a reference to the Tables
     std::vector<Dish>& getMenu();
     virtual ~Restaurant();
 
@@ -31,7 +32,6 @@ public:
 
 private:
     bool open;
-    int table_c;
     std::vector<Table*> tables;
     std::vector<Dish> menu;
     std::vector<BaseAction*> actionsLog;

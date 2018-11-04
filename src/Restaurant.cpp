@@ -5,11 +5,11 @@
 
 
 //Empty constructor
-Restaurant::Restaurant():open(true),tables(),actionsLog(),menu(),table_c(0){}
+Restaurant::Restaurant():open(true),tables(),actionsLog(),menu(){}
 
 
 //constructor
-Restaurant::Restaurant(const std::string &configFilePath):open(true),actionsLog(),table_c(0) {
+Restaurant::Restaurant(const std::string &configFilePath):open(true),actionsLog() {
 
 
 }
@@ -18,7 +18,6 @@ Restaurant::Restaurant(const std::string &configFilePath):open(true),actionsLog(
 Restaurant::Restaurant(const Restaurant &rest):tables(rest.tables),actionsLog(rest.actionsLog){
     menu=rest.menu;
     open=rest.open;
-    table_c=rest.table_c;
 
 }
 
@@ -130,21 +129,27 @@ int Restaurant:: Parse(std::string &configFilePath){
 int Restaurant:: getNumOfTables() const{
     return static_cast<int>(tables.size());
 }
+void Restaurant::addBaseAction(BaseAction* baseAction){
+    actionsLog.push_back(baseAction);
+}
 
 
 //iterates over Table vector and returns pointer to table that has 'ind' index
 Table* Restaurant:: getTable(int ind){
-    for(int i=0;i<tables.size();i++){
-        if(tables[i]->getTableIndex()==ind){
-            return tables[i];
-        }
-        return nullptr;
-    }
+   if(ind<0 || ind>getNumOfTables())
+       return nullptr;
+
+    return tables.at(static_cast<unsigned int>(ind));
 
 }
 //Returns a reference to the Menu vector
 std::vector<Dish>& Restaurant:: getMenu(){
     return menu;
+}
+
+//Returns a reference to the Menu vector
+const std::vector<Table*>& Restaurant:: getTables() const{
+    return tables;
 }
 
 
@@ -160,6 +165,9 @@ std::cout <<"Restaurant is now open!";
 std:: string userInput;
 std :: cin>>userInput;
 while(userInput!="closeall"){
+
+
+
 
     std :: cin>>userInput;
 }

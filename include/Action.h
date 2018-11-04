@@ -19,8 +19,9 @@ public:
     ActionStatus getStatus() const;
     virtual void act(Restaurant& restaurant)=0;
     virtual std::string toString() const=0;
+
 protected:
-    void editError(std::string errorMsg);
+    bool validTable(Table* table)const;
     void complete();
     void error(std::string errorMsg);
     std::string getErrorMsg() const;
@@ -35,6 +36,7 @@ public:
     OpenTable(int id, std::vector<Customer *> &customersList);
     void act(Restaurant &restaurant);
     std::string toString() const;
+
 private:
 	const int tableId;
 	const std::vector<Customer *> customers;
@@ -46,6 +48,7 @@ public:
     Order(int id);
     void act(Restaurant &restaurant);
     std::string toString() const;
+
 private:
     const int tableId;
 };
@@ -54,11 +57,13 @@ private:
 class MoveCustomer : public BaseAction {
 public:
     MoveCustomer(int src, int dst, int customerId);
-    bool validTables(Table* src_T ,Table* des_T )const;
+
     bool validCustomer(Customer *customer, Table* src_T)const;
     void act(Restaurant &restaurant);
     std::string toString() const;
+
 private:
+
     const int srcTable;
     const int dstTable;
     const int id;
@@ -70,6 +75,7 @@ public:
     Close(int id);
     void act(Restaurant &restaurant);
     std::string toString() const;
+
 private:
     const int tableId;
 };
@@ -80,6 +86,7 @@ public:
     CloseAll();
     void act(Restaurant &restaurant);
     std::string toString() const;
+
 private:
 };
 
@@ -89,6 +96,7 @@ public:
     PrintMenu();
     void act(Restaurant &restaurant);
     std::string toString() const;
+
 private:
 };
 
@@ -98,6 +106,7 @@ public:
     PrintTableStatus(int id);
     void act(Restaurant &restaurant);
     std::string toString() const;
+
 private:
     const int tableId;
 };
@@ -108,6 +117,7 @@ public:
     PrintActionsLog();
     void act(Restaurant &restaurant);
     std::string toString() const;
+
 private:
 };
 
@@ -117,6 +127,7 @@ public:
     BackupRestaurant();
     void act(Restaurant &restaurant);
     std::string toString() const;
+
 private:
 };
 
@@ -126,6 +137,7 @@ public:
     RestoreResturant();
     void act(Restaurant &restaurant);
     std::string toString() const;
+
 
 };
 
