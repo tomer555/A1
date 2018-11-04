@@ -70,6 +70,7 @@ std::string OpenTable :: toString() const{
        s2<<customers[i]->toString()<< "\n";
        output+=s2.str();
     }
+
     return output;
 }
 
@@ -139,7 +140,7 @@ bool MoveCustomer ::validTables(Table *src_T, Table *des_T) const {
 //checks if customer is valid and exists in src Table
 bool MoveCustomer :: validCustomer(Customer *customer,Table* src_T) const {
     bool output= true;
-    if(customer == nullptr || !dynamic_cast<Customer*>(customer) || !(*src_T).isExisted())
+    if(customer == nullptr || !dynamic_cast<Customer*>(customer) || !(*src_T).isExisted(id))
         return false;
     return output;
 }

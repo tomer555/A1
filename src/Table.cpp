@@ -49,6 +49,11 @@ using namespace std;
         }
 */
 
+       int Table::getTableIndex() const {
+
+           return T_id;
+       }
+
         void Table::closeTable(){
 
             open=false;

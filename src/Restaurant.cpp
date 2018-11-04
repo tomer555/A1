@@ -20,7 +20,6 @@ Restaurant::Restaurant(const Restaurant &rest):tables(rest.tables),actionsLog(re
     open=rest.open;
     table_c=rest.table_c;
 
-
 }
 
 //Move constructor
@@ -49,9 +48,9 @@ Restaurant & Restaurant:: operator=(Restaurant&& rest) {
 
 void Restaurant::steal(Restaurant &rest) {
     open=rest.open;
-    tables=rest.tables;
+    tables = std::move(rest.tables);
     menu=rest.menu;
-    actionsLog=rest.actionsLog;
+    actionsLog=std::move(rest.actionsLog);
     // missing delete rest vectors
 
 
@@ -66,7 +65,7 @@ clean();
 
 //Cleans all Restaurant fields
 void Restaurant::clean()  {
-    open= false;
+
     for(int i=0;i<tables.size();i++){ // Clean Tables
         delete tables[i];
         tables[i]= nullptr;
@@ -136,7 +135,7 @@ int Restaurant:: getNumOfTables() const{
 //iterates over Table vector and returns pointer to table that has 'ind' index
 Table* Restaurant:: getTable(int ind){
     for(int i=0;i<tables.size();i++){
-        if(tables[i].getTableIndex==ind){
+        if(tables[i]->getTableIndex()==ind){
             return tables[i];
         }
         return nullptr;

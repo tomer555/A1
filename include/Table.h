@@ -24,7 +24,7 @@ public:
     void closeTable();
     int getBill();
     bool isOpen();
-    int GetTableIndex();
+    int getTableIndex() const;
 private:
     int capacity;
     bool open;
