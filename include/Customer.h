@@ -8,11 +8,14 @@
 class Customer{
 public:
 	virtual Customer* clone() const = 0;
+    bool orderCheapest(std::vector<int>&output,const std::vector<Dish> &menu, DishType type);
+    bool orderExpensive(std::vector<int>&output,const std::vector<Dish> &menu, DishType type);
     Customer(std::string c_name, int c_id);
     virtual std::vector<int> order(const std::vector<Dish> &menu)=0;
     virtual std::string toString() const = 0;
     std::string getName() const;
     int getId() const;
+
 private:
     const std::string name;
     const int id;
@@ -37,6 +40,7 @@ public:
     std::vector<int> order(const std::vector<Dish> &menu);
     std::string toString() const;
 private:
+    bool firstOrder;
 };
 
 
@@ -47,6 +51,7 @@ public:
     std::vector<int> order(const std::vector<Dish> &menu);
     std::string toString() const;
 private:
+    bool firstOrder;
 };
 
 
@@ -57,6 +62,10 @@ public:
     std::vector<int> order(const std::vector<Dish> &menu);
     std::string toString() const;
 private:
+    bool firstOrder;
+    int lastOrderPrice;
+    int lastOrderId;
+
 };
 
 
