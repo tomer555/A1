@@ -10,6 +10,7 @@
 //Empty Constructor
 BaseAction::BaseAction(): status(PENDING),errorMsg(nullptr),ActionArgs(""){}
 
+
 //Empty Destructor
 BaseAction::~BaseAction() {}
 
@@ -125,6 +126,10 @@ std::string OpenTable :: toString() const{
     return output;
 }
 
+OpenTable *OpenTable::clone() const {
+    return new OpenTable(*this);
+}
+
 
 
 //---------------------------------Order-----------------------------------
@@ -149,6 +154,10 @@ std::string Order :: toString() const {
     std::stringstream s1;
     s1 << "Taking Order from Table number: " << tableId;
     return s1.str();
+}
+
+Order* Order::clone() const{
+    return new Order(*this);
 }
 
 
@@ -195,6 +204,10 @@ bool MoveCustomer :: validCustomer(Customer *customer,Table* src_T) const {
         return false;
     return output;
 }
+
+MoveCustomer * MoveCustomer:: clone() const{
+    return new MoveCustomer(*this);
+}
 //------------------------------------------Close--------------------------------------------
 
 //Constructor Order
@@ -221,6 +234,9 @@ std::string Close :: toString() const {
     return s1.str();
 }
 
+Close * Close:: clone() const{
+    return new Close(*this);
+}
 
 //-----------------------------CloseAll------------------------------------------------------
 //Constructor Order
@@ -247,7 +263,9 @@ std::string CloseAll :: toString() const{
     return s1.str();
 }
 
-
+CloseAll * CloseAll:: clone() const{
+    return new CloseAll(*this);
+}
 //-----------------------------PrintMenu------------------------------------------------------
 PrintMenu ::PrintMenu(): BaseAction(){}
 
@@ -268,7 +286,9 @@ std::string PrintMenu :: toString() const{
     return s1.str();
 }
 
-
+PrintMenu * PrintMenu:: clone()const{
+    return new PrintMenu(*this);
+}
 
 //--------------------------printTableStatus-------------------------------------------
 PrintTableStatus ::PrintTableStatus(int id): BaseAction() ,tableId(id){
@@ -311,6 +331,10 @@ std::string PrintTableStatus :: toString() const{
     return s1.str();
 }
 
+PrintTableStatus * PrintTableStatus:: clone()const{
+    return new PrintTableStatus(*this);
+}
+
 
 
 //--------------------PrintActionsLog---------------------------------
@@ -334,3 +358,8 @@ void PrintActionsLog ::act(Restaurant &restaurant) {
 std::string PrintActionsLog :: toString() const{
     return "log";
 }
+
+PrintActionsLog * PrintActionsLog:: clone()const{
+    return new PrintActionsLog(*this);
+}
+
