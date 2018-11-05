@@ -78,7 +78,7 @@ OpenTable:: ~OpenTable(){
 //Copy Constructor
 OpenTable::OpenTable(const OpenTable &open):tableId(open.tableId){
     for(int i=0;i<open.customers.size();i++){
-        customers[i]=new Customer(open.customers[i]);
+        customers[i]=open.customers[i].clone();
     }
 
 }
