@@ -41,9 +41,14 @@ private:
 class OpenTable : public BaseAction {
 public:
 	virtual OpenTable* clone() const;
+	void clear();
+	OpenTable& operator=(const OpenTable &other);
     OpenTable(int id, std::vector<Customer *> &customersList);
 	virtual ~OpenTable();
-	OpenTable(const OpenTable &open);
+	OpenTable(const OpenTable &other);
+	OpenTable(OpenTable &&other);
+	OpenTable& operator=(OpenTable &&other);
+	void copy(const std::vector<Customer*>& customerList);
     void act(Restaurant &restaurant);
 	void setArgs(int id, std::vector<Customer *> &customersList);
     std::string toString() const;

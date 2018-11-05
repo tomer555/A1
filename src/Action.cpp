@@ -55,9 +55,55 @@ bool BaseAction ::validTable(Table *table) const {
 
 //Constructor OpenTable
 OpenTable ::OpenTable(int id, std::vector<Customer *> &customersList):BaseAction(),tableId(id),customers(customersList){
-
-
 }
+//OpenTable Destructor
+OpenTable:: ~OpenTable(){
+    clear();
+}
+
+//Copy Constructor
+OpenTable::OpenTable(const OpenTable &other):tableId(other.tableId){
+    copy(other.customers);
+}
+
+//copy assignment operator
+OpenTable& OpenTable::operator=(const OpenTable &other)
+{
+    if (this != &other){
+        clear();
+        copy(other.customers);
+    }
+    return *this;
+}
+
+//Move Constructor
+OpenTable::OpenTable(OpenTable&& other) : tableId(other.tableId),customers(other.customers){}
+
+
+// Move Assignment
+OpenTable& OpenTable::operator=(OpenTable &&other)
+{
+    if (this != &other)
+    {
+        clear();
+        customers=std::move(other.customers);
+    }
+
+    return *this;
+}
+//copy all the members of the object
+void OpenTable::copy(const std::vector<Customer*>& customerList){
+    for(int i=0;i<customerList.size();i++){
+        customers[i]=customerList.clone();
+    }
+}
+
+void OpenTable:: clear(){
+    for(int i=0;i<customers.size();++i){
+        delete customers[i];
+    }
+}
+
 
 void OpenTable::setArgs (int id, std::vector<Customer *> &customersList){
     std:: stringstream s1;
@@ -69,20 +115,9 @@ void OpenTable::setArgs (int id, std::vector<Customer *> &customersList){
     }
     setActionArgs(output);
 }
-//OpenTable Destructor
-OpenTable:: ~OpenTable(){
-    for(int i=0;i<customers.size();++i){
-       delete customers[i];
-    }
-}
 
-//Copy Constructor
-OpenTable::OpenTable(const OpenTable &open):tableId(open.tableId){
-    for(int i=0;i<open.customers.size();i++){
-        customers[i]=open.customers[i].clone();
-    }
 
-}
+
 
 void OpenTable ::act(Restaurant &restaurant){
     Table *temp=restaurant.getTable(tableId);
