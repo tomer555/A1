@@ -1,11 +1,8 @@
-//
-// Created by tomer on 01/11/18.
-//
 #include "../include/Customer.h"
 
 //--------------------------------Customer-------------------------------------------------
 //Constructor Memory initialization
-Customer::Customer(std::string c_name, int c_id):name(c_name),id(c_id){}
+Customer::Customer(std::string c_name, int c_id):name(std::move(c_name)),id(c_id){}
 
 //Returns the Customer's name
 std::string Customer:: getName() const{
@@ -19,7 +16,7 @@ int Customer:: getId() const {
 
 //--------------------------------VegetarianCustomer-------------------------------------------------
 
-VegetarianCustomer ::VegetarianCustomer(std::string name, int id) : Customer(name,id){}
+VegetarianCustomer ::VegetarianCustomer(std::string name, int id) : Customer(std::move(name),id){}
 
 std::vector<int> VegetarianCustomer:: order(const std::vector<Dish> &menu){
     std::vector<int> output;
@@ -50,6 +47,8 @@ std::vector<int> VegetarianCustomer:: order(const std::vector<Dish> &menu){
                     low_id=dishID;
                 }
                 break;
+            case SPC:break;
+            case ALC:break;
         }
     }
     // check if VEG dish existed AND BVG existed
@@ -61,7 +60,7 @@ std::vector<int> VegetarianCustomer:: order(const std::vector<Dish> &menu){
 }
 
 //--------------------------------CheapCustomer-------------------------------------------------
-CheapCustomer::CheapCustomer(std::string name, int id): Customer(name,id){}
+CheapCustomer::CheapCustomer(std::string name, int id): Customer(std::move(name),id){}
 
 std::vector<int> CheapCustomer:: order(const std::vector<Dish> &menu){
     std::vector<int> output;
@@ -84,9 +83,9 @@ std::vector<int> CheapCustomer:: order(const std::vector<Dish> &menu){
 
 //--------------------------------SpicyCustomer-------------------------------------------------
 
-SpicyCustomer ::SpicyCustomer(std::string name, int id): Customer(name,id) {}
+SpicyCustomer ::SpicyCustomer(std::string name, int id): Customer(std::move(name),id) {}
 
 
 //--------------------------------AlchoholicCustomer-------------------------------------------------
 
-AlchoholicCustomer ::AlchoholicCustomer(std::string name, int id):Customer(name,id){}
+AlchoholicCustomer ::AlchoholicCustomer(std::string name, int id):Customer(std::move(name),id){}
