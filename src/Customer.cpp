@@ -59,6 +59,7 @@ std::vector<int> VegetarianCustomer:: order(const std::vector<Dish> &menu){
     return output;
 }
 
+
 //--------------------------------CheapCustomer-------------------------------------------------
 CheapCustomer::CheapCustomer(std::string name, int id): Customer(std::move(name),id){}
 
