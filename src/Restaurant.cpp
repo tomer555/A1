@@ -14,7 +14,7 @@ Restaurant::Restaurant(const std::string &configFilePath):open(true),actionsLog(
 
 }
 
-//Default Copy Constructor
+//Copy Constructor
 Restaurant::Restaurant(const Restaurant &rest):tables(rest.tables),actionsLog(rest.actionsLog){
     menu=rest.menu;
     open=rest.open;

@@ -10,6 +10,9 @@
 //Empty Constructor
 BaseAction::BaseAction(): status(PENDING),errorMsg(nullptr),ActionArgs(""){}
 
+//Empty Destructor
+BaseAction::~BaseAction() {}
+
 //Return the Action's status
 ActionStatus BaseAction:: getStatus() const{
     return this->status;
@@ -64,6 +67,20 @@ void OpenTable::setArgs (int id, std::vector<Customer *> &customersList){
         output+=customersList[i]->toString();
     }
     setActionArgs(output);
+}
+//OpenTable Destructor
+OpenTable:: ~OpenTable(){
+    for(int i=0;i<customers.size();++i){
+       delete customers[i];
+    }
+}
+
+//Copy Constructor
+OpenTable::OpenTable(const OpenTable &open):tableId(open.tableId){
+    for(int i=0;i<open.customers.size();i++){
+        customers[i]=new Customer(open.customers[i]);
+    }
+
 }
 
 void OpenTable ::act(Restaurant &restaurant){

@@ -17,6 +17,8 @@ int Customer:: getId() const {
     this->id;
 }
 
+
+
 //--------------------------------VegetarianCustomer-------------------------------------------------
 
 VegetarianCustomer ::VegetarianCustomer(std::string name, int id) : Customer(name,id){}
