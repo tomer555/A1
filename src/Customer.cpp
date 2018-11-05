@@ -58,7 +58,9 @@ std::vector<int> VegetarianCustomer:: order(const std::vector<Dish> &menu){
     }
     return output;
 }
-
+VegetarianCustomer* VegetarianCustomer:: clone() const{
+    return new VegetarianCustomer(*this);
+}
 
 //--------------------------------CheapCustomer-------------------------------------------------
 CheapCustomer::CheapCustomer(std::string name, int id): Customer(std::move(name),id){}
@@ -80,13 +82,24 @@ std::vector<int> CheapCustomer:: order(const std::vector<Dish> &menu){
     output.push_back(low_price_id);
     return output;
 }
+CheapCustomer* CheapCustomer:: clone() const{
+    return new CheapCustomer(*this);
+}
+
 
 
 //--------------------------------SpicyCustomer-------------------------------------------------
 
 SpicyCustomer ::SpicyCustomer(std::string name, int id): Customer(std::move(name),id) {}
 
+SpicyCustomer* SpicyCustomer:: clone() const{
+    return new SpicyCustomer(*this);
+}
 
 //--------------------------------AlchoholicCustomer-------------------------------------------------
 
 AlchoholicCustomer ::AlchoholicCustomer(std::string name, int id):Customer(std::move(name),id){}
+
+AlchoholicCustomer* AlchoholicCustomer:: clone() const{
+    return new AlchoholicCustomer(*this);
+}
