@@ -4,6 +4,9 @@
 //Constructor Memory initialization
 Customer::Customer(std::string c_name, int c_id):name(std::move(c_name)),id(c_id){}
 
+//Destructor
+Customer::~Customer(){}
+
 //Returns the Customer's name
 std::string Customer:: getName() const{
     return this->name;

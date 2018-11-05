@@ -8,6 +8,7 @@
 class Customer{
 public:
 	virtual Customer* clone() const = 0;
+	virtual ~Customer();
     bool orderCheapest(std::vector<int>&output,const std::vector<Dish> &menu, DishType type);
     bool orderExpensive(std::vector<int>&output,const std::vector<Dish> &menu, DishType type);
     Customer(std::string c_name, int c_id);
