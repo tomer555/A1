@@ -12,71 +12,71 @@ Restaurant::Restaurant():open(true),tables(),actionsLog(),menu(){}
 Restaurant::Restaurant(const std::string &configFilePath):open(true),actionsLog() {
 
 
+
+
 }
 
 //Copy Constructor
-Restaurant::Restaurant(const Restaurant &rest):tables(rest.tables),actionsLog(rest.actionsLog){
-    menu=rest.menu;
-    open=rest.open;
-
+Restaurant::Restaurant(const Restaurant &rest):{
+    copy(rest);
 }
 
 //Move constructor
-Restaurant::Restaurant(Restaurant &&rest) {
+Restaurant::Restaurant(Restaurant &&rest) noexcept {
     steal(rest);
 }
 
 //Copy Assignment Operator
 Restaurant & Restaurant:: operator=(const Restaurant& rest)  {
     // check for "self assignment" and do nothing in that case
-    if (this == &rest) {
-        return *this;
+    if (this != &rest) {
+        clear();
+        copy(rest);
     }
-    clean();
-    copy(rest);
     return *this;
 }
 
 
 //Move Assignment Operator
-Restaurant & Restaurant:: operator=(Restaurant&& rest) {
-    clean();
+Restaurant & Restaurant:: operator=(Restaurant&& rest) noexcept {
+    clear();
     steal(rest);
     return *this;
 }
 
+//steals 'rest' resources into 'this'
 void Restaurant::steal(Restaurant &rest) {
     open=rest.open;
     tables = std::move(rest.tables);
-    menu=rest.menu;
+    menu=std::move(rest.menu);
     actionsLog=std::move(rest.actionsLog);
-    // missing delete rest vectors
 
-
-
+    rest.open= false;
 }
 
 //---------------------------Destructor and Cleaners------------------
 //Destructor
 Restaurant::~Restaurant(){
-clean();
+clear();
 }
 
 //Cleans all Restaurant fields
-void Restaurant::clean()  {
+void Restaurant::clear()  {
 
     for(int i=0;i<tables.size();i++){ // Clean Tables
         delete tables[i];
         tables[i]= nullptr;
     }
+    tables.clear();
 
     for(int i=0;i<actionsLog.size();i++){ // Clean actionLog
         delete actionsLog[i];
         actionsLog[i]= nullptr;
     }
+    actionsLog.clear();
+
 
     menu.clear(); // clean Dishes
-
 
 }
 
@@ -85,19 +85,24 @@ void Restaurant::clean()  {
 
 //Copy 'rest' fields into 'this'
 void Restaurant::copy(const Restaurant & rest)  {
+    open=rest.open;
+
     this->tables.resize(rest.tables.size()); // Copy Tables
     for(int i=0;i<rest.tables.size();i++){
-        this->tables[i]=rest.tables[i];
+        this->tables[i]=rest.tables[i];//will activate Table's copy constructor
     }
 
-    this->menu.resize(rest.menu.size()); // Copy Dishes
-    this->menu=rest.menu;
+    this->menu.resize(rest.menu.size()); //Maybe not necessary
+    for(int i=0;i<rest.menu.size();i++){// Copy Dishes
+        Dish d(rest.menu[i].getId(),rest.menu[i].getName(),rest.menu[i].getPrice(),rest.menu[i].getType());
+        menu.push_back(d);
+    }
 
     this->actionsLog.resize(rest.actionsLog.size()); //Copy actionLog
     for(int i=0;i<rest.actionsLog.size();i++){
-        this->actionsLog[i]=rest.actionsLog[i];
+        this->actionsLog[i]=rest.actionsLog[i]->clone();
     }
-
+//clone the BaseAction and will return a pointer to the new BaseAction
 }
 
 //-----------------------Methods----------------------------------------------------
@@ -128,9 +133,6 @@ int Restaurant:: Parse(std::string &configFilePath){
 //Returns the number of tables in the Restaurant
 int Restaurant:: getNumOfTables() const{
     return static_cast<int>(tables.size());
-}
-void Restaurant::addBaseAction(BaseAction* baseAction){
-    actionsLog.push_back(baseAction);
 }
 
 

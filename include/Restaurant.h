@@ -8,28 +8,51 @@
 #include "Action.h"
 
 
-class Restaurant{		
+class Restaurant{
+
+    //-----------------Constructors-----------------------------------
 public:
+    //Empty Constructor
 	Restaurant();
+
+    // Constructor
     Restaurant(const std::string &configFilePath);
-    Restaurant(const Restaurant &rest);
-    Restaurant(Restaurant &&rest);
-    Restaurant& operator=(const Restaurant& rest);
-    Restaurant& operator=(Restaurant&& rest);
-    void start();
-    void clean();
-    void steal(Restaurant &rest);
-    void addBaseAction(BaseAction* baseAction);
-    void copy(const Restaurant& rest);
-    int getNumOfTables() const;
-    Table* getTable(int ind);
-	const std::vector<BaseAction*>& getActionsLog() const; // Return a reference to the history of actions
-    const std::vector<Table*>& getTables() const; // Return a reference to the Tables
-    std::vector<Dish>& getMenu();
+
+//--------------------Rule of 5----------------------------------
+    //Destructor
     virtual ~Restaurant();
 
+    // Copy Constructor
+    Restaurant(const Restaurant &rest);
+
+    // Copy Assignment
+    Restaurant& operator=(const Restaurant& rest);
+
+    // Move Constructor
+     Restaurant(Restaurant &&rest) noexcept;
+
+    // Move Assignment
+    Restaurant& operator=(Restaurant&& rest) noexcept;
+
+
+    //-----------------------Getters-----------------------------------------
+
+    int getNumOfTables() const;
+    const std::vector<BaseAction*>& getActionsLog() const; // Return a reference to the history of actions
+    const std::vector<Table*>& getTables() const; // Return a reference to the Tables
+
+
+    //--------------------Methods----------------------------------
+
+    void start();
+    void clear();
+    void steal(Restaurant &rest);
+    void copy(const Restaurant& rest);
+    Table* getTable(int ind);
+    std::vector<Dish>& getMenu();
     int Parse(std::string &configFilePath);
 
+    //------------------Members--------------------------------------
 private:
     bool open;
     std::vector<Table*> tables;
