@@ -50,7 +50,8 @@ public:
     void copy(const Restaurant& rest);
     Table* getTable(int ind);
     std::vector<Dish>& getMenu();
-    int Parse(std::string &configFilePath);
+    std::vector<std::string> splitString(const std::string& stringToSplit, const std::string& regexPattern);
+
 
     //------------------Members--------------------------------------
 private:

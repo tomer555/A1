@@ -1,5 +1,6 @@
 
 #include "../include/Restaurant.h"
+#include <regex>
 //-------------------------Constructors-------------------------------
 
 
@@ -11,8 +12,10 @@ Restaurant::Restaurant():open(true),tables(),actionsLog(),menu(){}
 //constructor
 Restaurant::Restaurant(const std::string &configFilePath):open(true),actionsLog() {
 
-
-
+    std::vector<std::string> vec = splitString(configFilePath, "[\\r\\n]+");
+    for(int i=0;i<vec.size();i++){
+        std::cout<<vec[i]<<"\n";
+    }
 
 }
 
@@ -108,27 +111,18 @@ void Restaurant::copy(const Restaurant & rest)  {
 //-----------------------Methods----------------------------------------------------
 
 
-int Restaurant:: Parse(std::string &configFilePath){
-    std::size_t index3=configFilePath.find("Menu");
-    std::size_t index1=configFilePath.find("#number of tables");
-    std::size_t index2=configFilePath.find("#tables description");
+std::vector<std::string> Restaurant:: splitString(const std::string& stringToSplit, const std::string& regexPattern)
+{
+    std::vector<std::string> result;
+    const std::regex rgx(regexPattern);
+    std::sregex_token_iterator iter(stringToSplit.begin(), stringToSplit.end(), rgx, -1);
 
-    std::string para1=configFilePath.substr(index1,index2);
-    std::string para2=configFilePath.substr(index2,index3);
-    std::string para3=configFilePath.substr(index3);
-    std::size_t para1_lspace=para1.find('\n');
-    std::size_t para1_rspace=para1.rfind('\n');
-    std::size_t para2_lspace=para2.find('\n');
-    std::size_t para2_rspace=para2.rfind('\n');
-    std::size_t para3_lspace=para3.find('\n');
+    for (std::sregex_token_iterator end; iter != end; ++iter)
+    {
+        result.push_back(iter->str());
+    }
 
-    std::string final1=para1.substr(para1_lspace+1,para1_rspace);
-    std::string final2=para2.substr(para2_lspace+1,para2_rspace);
-    std::string final3=para3.substr(para3_lspace+1);
-    std ::cout<< final1;
-    std ::cout<< final2;
-    std ::cout<< final3;
-
+    return result;
 }
 //Returns the number of tables in the Restaurant
 int Restaurant:: getNumOfTables() const{
