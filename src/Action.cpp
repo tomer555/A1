@@ -56,54 +56,6 @@ bool BaseAction ::validTable(Table *table) const {
 //Constructor OpenTable
 OpenTable ::OpenTable(int id, std::vector<Customer *> &customersList):BaseAction(),tableId(id),customers(customersList){
 }
-//OpenTable Destructor
-OpenTable:: ~OpenTable(){
-    clear();
-}
-
-//Copy Constructor
-OpenTable::OpenTable(const OpenTable &other):tableId(other.tableId){
-    copy(other.customers);
-}
-
-//copy assignment operator
-OpenTable& OpenTable::operator=(const OpenTable &other)
-{
-    if (this != &other){
-        clear();
-        copy(other.customers);
-    }
-    return *this;
-}
-
-//Move Constructor
-OpenTable::OpenTable(OpenTable&& other) : tableId(other.tableId),customers(other.customers){}
-
-
-// Move Assignment
-OpenTable& OpenTable::operator=(OpenTable &&other)
-{
-    if (this != &other)
-    {
-        clear();
-        customers=std::move(other.customers);
-    }
-
-    return *this;
-}
-//copy all the members of the object
-void OpenTable::copy(const std::vector<Customer*>& customerList){
-    for(int i=0;i<customerList.size();i++){
-        customers[i]=customerList.clone();
-    }
-}
-
-void OpenTable:: clear(){
-    for(int i=0;i<customers.size();++i){
-        delete customers[i];
-    }
-}
-
 
 void OpenTable::setArgs (int id, std::vector<Customer *> &customersList){
     std:: stringstream s1;
@@ -214,9 +166,7 @@ void MoveCustomer ::act(Restaurant &restaurant) {
         (*temp_dst).addCustomer(temp_c);//add customer to destination Table
         (*temp_src).removeCustomer(id);
         if ((*temp_src).getCustomers().empty()) {// check if src Table is empty
-            BaseAction *close = new Close(srcTable);
-            (*close).act(restaurant);//activate close
-            restaurant.addBaseAction(close);//add Close action to actionLog
+            (*temp_src).closeTable();
 
         } else
             this->error("Cannot move Customer");
