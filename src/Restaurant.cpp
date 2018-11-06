@@ -11,16 +11,33 @@ Restaurant::Restaurant():open(true),tables(),actionsLog(),menu(){}
 
 //constructor
 Restaurant::Restaurant(const std::string &configFilePath):open(true),actionsLog() {
-
+    std::vector<std::string> initialze;
     std::vector<std::string> vec = splitString(configFilePath, "[\\r\\n]+");
     for(int i=0;i<vec.size();i++){
-        std::cout<<vec[i]<<"\n";
+        if(vec[i]!="\n" && vec[i]!=" \n" && vec[i].find('#') == std::string::npos){
+            std::vector<std::string> split=splitStringComma(vec[i]);
+            for(int j=0;j<split.size();j++){
+                initialze.push_back(split[j]);
+            }
+        }
     }
+    if(!initialze.empty()) {
+        int numOfTables = atoi(initialze[0].c_str());
+
+        for (int i = 1; i < numOfTables + 1; i++) {
+            tables.push_back(new Table(atoi(initialze[i].c_str())));
+        }
+        for (int j = numOfTables + 1;j< initialze.size(); j=j+3) {
+            Dish d(atoi(initialze[j].c_str()),initialze[j+1],atoi(initialze[j+2].c_str()),convert(initialze[j+3]));
+            menu.push_back(d);
+        }
+    }
+
 
 }
 
 //Copy Constructor
-Restaurant::Restaurant(const Restaurant &rest):{
+Restaurant::Restaurant(const Restaurant &rest){
     copy(rest);
 }
 
@@ -95,7 +112,7 @@ void Restaurant::copy(const Restaurant & rest)  {
         this->tables[i]=rest.tables[i];//will activate Table's copy constructor
     }
 
-    this->menu.resize(rest.menu.size()); //Maybe not necessary
+    //this->menu.resize(rest.menu.size()); //Maybe not necessary
     for(int i=0;i<rest.menu.size();i++){// Copy Dishes
         Dish d(rest.menu[i].getId(),rest.menu[i].getName(),rest.menu[i].getPrice(),rest.menu[i].getType());
         menu.push_back(d);
@@ -122,6 +139,18 @@ std::vector<std::string> Restaurant:: splitString(const std::string& stringToSpl
         result.push_back(iter->str());
     }
 
+    return result;
+}
+
+std::vector<std::string> Restaurant:: splitStringComma(const std::string& stringToSplit){
+    std::stringstream ss(stringToSplit);
+    std::vector<std::string> result;
+    while( ss.good() )
+    {
+        std::string substr;
+        getline( ss, substr, ',' );
+        result.push_back( substr );
+    }
     return result;
 }
 //Returns the number of tables in the Restaurant
@@ -156,16 +185,29 @@ const std::vector<BaseAction*>& Restaurant :: getActionsLog() const{
 
 
 // Main function of Restaurant: Open the restaurant and execute commands.
-void Restaurant :: start(){
-std::cout <<"Restaurant is now open!";
-std:: string userInput;
-std :: cin>>userInput;
-while(userInput!="closeall"){
+void Restaurant :: start() {
+    std::cout << "Restaurant is now open!";
+    std::string userInput;
+    std::cin >> userInput;
+    while (userInput != "closeall") {
 
 
-
-
-    std :: cin>>userInput;
+        std::cin >> userInput;
+    }
 }
 
+
+DishType Restaurant ::convert(const std::string& str)const {
+
+    if (str == "BVG")
+        return BVG;
+    else if (str == "VEG")
+        return VEG;
+    else if (str == "ALC")
+        return ALC;
+    else if (str == "SPC")
+        return SPC;
+
+    return SPC;
 }
+

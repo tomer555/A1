@@ -7,7 +7,7 @@ using namespace std;
 Restaurant* backup = nullptr;
 
 int main(int argc, char** argv){
-std::string test="#number of tables\n6\n#tables description\n6,4,4,14,10,10\n#Menu\nBeer,ALC,50\nSalad,VEG,40";
+std::string test="#number of tables\n \n6\n#tables description\n6,4,4,14,10,10\n#Menu\nBeer,ALC,50\nSalad,VEG,40";
  Restaurant restaurant(test);
 
 

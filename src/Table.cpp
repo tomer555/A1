@@ -3,10 +3,10 @@
 //
 
 #include "../include/Table.h"
-#include <vector>
+
 // #include <shared_ptr>   why is not it working?
 //std::shared_ptr
-using namespace std;
+
 
 //-------------------------Constructors-------------------------------
 
@@ -20,7 +20,7 @@ using namespace std;
     // a copy constructor
 
     Table::Table (const Table & other):capacity(other.capacity){
-        orderList=other.orderList;
+       // orderList=other.orderList;
         customersList=other.customersList;
         open=other.open;
 
@@ -37,7 +37,7 @@ using namespace std;
     void Table::steal(Table &other) {
         open=other.open;
         customersList = std::move(other.customersList);
-        orderList=other.orderList;
+//        orderList=other.orderList;
     // missing delete rest vectors
 
     }
@@ -90,8 +90,8 @@ using namespace std;
             this->customersList[i]=other.customersList[i];
         }
 
-        this->orderList.resize(other.orderList.size()); // Copy customers
-        this->orderList=other.orderList;
+        //this->orderList.resize(other.orderList.size()); // Copy customers
+        //this->orderList=other.orderList;
 
     }
 

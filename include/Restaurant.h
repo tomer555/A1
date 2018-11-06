@@ -51,6 +51,9 @@ public:
     Table* getTable(int ind);
     std::vector<Dish>& getMenu();
     std::vector<std::string> splitString(const std::string& stringToSplit, const std::string& regexPattern);
+    std::vector<std::string> splitStringComma(const std::string& stringToSplit);
+    DishType convert(const std::string& str)const;
+
 
 
     //------------------Members--------------------------------------

@@ -114,7 +114,7 @@ std::string OpenTable :: toString() const{
 }
 
 OpenTable *OpenTable::clone() const {
-    return new OpenTable(*this);
+    return nullptr;// new OpenTable(*this);
 }
 
 
@@ -234,7 +234,7 @@ void CloseAll ::act(Restaurant &restaurant) {
 //each table that is open will be closed and the bill will be printed in increasing order
     for(int i = 0; i < Table_vec.size(); i++) {
         if (Table_vec[i]->isOpen())
-            restaurant.addBaseAction(new Close(i));
+            Table_vec[i]->closeTable();
     }
 this->complete();
     //restaurant need to be close now? or when we go back from the function
@@ -347,4 +347,35 @@ std::string PrintActionsLog :: toString() const{
 PrintActionsLog * PrintActionsLog:: clone()const{
     return new PrintActionsLog(*this);
 }
+//--------------------------------------------------------------------------------------------
+BackupRestaurant *BackupRestaurant::clone() const {
+    return nullptr;
+}
 
+BackupRestaurant::BackupRestaurant() {
+
+}
+
+void BackupRestaurant::act(Restaurant &restaurant) {
+
+}
+
+std::string BackupRestaurant::toString() const {
+    return std::__cxx11::string();
+}
+
+RestoreResturant *RestoreResturant::clone() const {
+    return nullptr;
+}
+
+RestoreResturant::RestoreResturant() {
+
+}
+
+void RestoreResturant::act(Restaurant &restaurant) {
+
+}
+
+std::string RestoreResturant::toString() const {
+    return std::__cxx11::string();
+}

@@ -1,5 +1,6 @@
 #include "../include/Customer.h"
 
+
 //--------------------------------Customer-------------------------------------------------
 //Constructor Memory initialization
 Customer::Customer(std::string c_name, int c_id):name(std::move(c_name)),id(c_id){}
@@ -99,6 +100,10 @@ VegetarianCustomer* VegetarianCustomer:: clone() const{
     return new VegetarianCustomer(*this);
 }
 
+std::string VegetarianCustomer::toString() const {
+    return std::__cxx11::string();
+}
+
 //--------------------------------CheapCustomer-------------------------------------------------
 CheapCustomer::CheapCustomer(std::string name, int id): Customer(std::move(name),id) , firstOrder(false){}
 
@@ -131,6 +136,9 @@ CheapCustomer* CheapCustomer:: clone() const{
     return new CheapCustomer(*this);
 }
 
+std::string CheapCustomer::toString() const {
+    return std::__cxx11::string();
+}
 
 
 //--------------------------------SpicyCustomer-------------------------------------------------
@@ -154,6 +162,10 @@ std::vector<int> SpicyCustomer:: order(const std::vector<Dish> &menu){
         orderCheapest(output,menu,BVG);//will order the cheapest non Alc  if exist
 
     return output;
+}
+
+std::string SpicyCustomer::toString() const {
+    return std::__cxx11::string();
 }
 
 
@@ -216,6 +228,11 @@ std::vector<int> AlchoholicCustomer:: order(const std::vector<Dish> &menu) {
         return output;
     }
     return output;
-}//-------------------------------------------------------------------------------------------------------------------------------
+}
+
+std::string AlchoholicCustomer::toString() const {
+    return std::__cxx11::string();
+}
+//-------------------------------------------------------------------------------------------------------------------------------
 
 
