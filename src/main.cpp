@@ -8,8 +8,8 @@ Restaurant* backup = nullptr;
 
 int main(int argc, char** argv){
 std::string test="#number of tables\n6\n#tables description\n6,4,4,14,10,10\n#Menu\nBeer,ALC,50\nSalad,VEG,40";
- Restaurant restaurant;
- restaurant.Parse(test);
+ Restaurant restaurant(test);
+
 
 /*
     if(argc!=2){
