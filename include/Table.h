@@ -22,6 +22,7 @@ public:
 
     int getCapacity() const;
     void addCustomer(Customer* customer);
+    OrderPair makeOrder(int customerId,Dish dish)const;
     void removeCustomer(int id);
     Customer* getCustomer(int id);
     std::vector<Customer*>& getCustomers();

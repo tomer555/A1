@@ -14,7 +14,6 @@
 
     Table::Table (int t_capacity) : capacity(t_capacity),orderList(),customersList(),open(){
         openTable();
-          //table_C++;
         }
 
     // a copy constructor
@@ -24,39 +23,45 @@
 
         }
 
-    //Move constructor
+//Move constructor
     Table::Table(Table &&other) {
         steal(other);
     }
 
-    //steal function
-    void Table::steal(Table &other) {
-        open=other.open;
-        capacity=other.capacity;
-        customersList = std::move(other.customersList);
-        orderList = std::move(other.orderList);
-
-        other.closeTable();
-    }
-
-    //Copy Assignment Operator
-    Table & Table:: operator=(const Table& other)  {
+//Copy Assignment Operator
+Table & Table:: operator=(const Table& other)  {
     // check for "self assignment" and do nothing in that case
-        if (this == &other) {
-        return *this;
-        }
-        clean();
-        copy(other);
+    if (this == &other) {
         return *this;
     }
+    clean();
+    copy(other);
+    return *this;
+}
 
-
-    //Move Assignment Operator
+//Move Assignment Operator
     Table & Table:: operator=(Table&& other) {
         clean();
         steal(other);
         return *this;
+}
+
+    //std move?
+//diffrence between copy to move?
+//steal function
+    void Table::steal(Table &other) {
+        open=other.open;
+        capacity=other.capacity;
+ //the same order for * and regular?
+
+        customersList = std::move(other.customersList);
+        orderList = std::move(other.orderList);
+//im not sure about that. i have to delete the other data on the stack....
+//        other.open= false;
     }
+
+
+
 
 
 //---------------------------Destructor and Cleaners------------------
@@ -74,6 +79,7 @@
         }
         customersList.clear();
 
+
         orderList.clear(); // clean orders
     }
 
@@ -85,18 +91,15 @@
     void Table::copy(const Table & other)  {
         this->capacity=other.capacity;
         this->open=other.open;
-        this->customersList.resize(other.customersList.size()); // Copy orders
+                                                       // Copy orders
         for(int i=0;i<other.customersList.size();i++){
-            this->customersList[i]=other.customersList[i];
+            this->customersList.push_back(other.customersList[i]->clone());
         }
         for (int j = 0; j < customersList.size(); ++j) {
             OrderPair p(other.orderList[j].first,other.orderList[j].second);
             orderList.push_back(p);
 
         }
-
-        //this->orderList.resize(other.orderList.size()); // Copy customers
-        //this->orderList=other.orderList;
 
     }
 
@@ -149,10 +152,11 @@
         void Table:: removeCustomer(int id){
 
             for (int i = 0; i < customersList.size(); ++i) {
-                if (customersList[i]->getId()==id)
-                    customersList.erase(customersList.begin()+i);
-            }
-
+                if (customersList[i]->getId()==id){
+                    delete customersList[i];
+                        customersList.erase(customersList.begin()+i);
+                }
+             }
         }
 
         Customer*  Table::getCustomer(int id) {
@@ -183,18 +187,23 @@
             }
 
 
-            //a clarification is needed
-            void Table::order(const std::vector<Dish> &menu){
+
+            void Table::order(const std::vector<Dish> &menu) {
                 //when you do table.order() it can call customer.order(menu) for all the customers at the table
-                for (int i = 0; i <customersList.size() ; ++i) {
-                    for (int j = 0; j < customersList[i]->order(menu).size(); ++j) {
-                        OrderPair p(i,menu[customersList[i]->order(menu)[j]]);
-                        orderList.push_back(p);
+                for (int i = 0; i < customersList.size(); ++i) {
+                    std::vector<int> customerOrder = customersList[i]->order(menu);
+                    for (int j = 0; j < customerOrder.size(); ++j) {
+                        for (int k = 0; k < menu.size(); ++k) {
+                            if (menu[k].getId() == customerOrder[j])
+                                orderList.push_back(makeOrder(customersList[i]->getId(),menu[k]));
+
+                        }
                     }
                 }
-                }
+            }
 
+OrderPair Table:: makeOrder(int customerId,Dish dish)const{
+    OrderPair p(customerId,dish);
+    return p;
 
-
-
-
+}
