@@ -19,14 +19,10 @@
 
     // a copy constructor
 
-    Table::Table (const Table & other):capacity(other.capacity){
-       // orderList=other.orderList;
-        customersList=other.customersList;
-        open=other.open;
+    Table::Table (const Table & other){
+      copy(other);
 
         }
-
-//why is the '&&' for?
 
     //Move constructor
     Table::Table(Table &&other) {
@@ -36,10 +32,11 @@
     //steal function
     void Table::steal(Table &other) {
         open=other.open;
+        capacity=other.capacity;
         customersList = std::move(other.customersList);
-//        orderList=other.orderList;
-    // missing delete rest vectors
+        orderList = std::move(other.orderList);
 
+        other.closeTable();
     }
 
     //Copy Assignment Operator
@@ -75,19 +72,27 @@
             delete customersList[i];
             customersList[i]= nullptr;
         }
+        customersList.clear();
+
         orderList.clear(); // clean orders
     }
 
 
 //----------------------------Copy---------------------------------------
+//y the arrow is necessary
 
     //Copy 'rest' fields into 'this'
     void Table::copy(const Table & other)  {
-
+        this->capacity=other.capacity;
+        this->open=other.open;
         this->customersList.resize(other.customersList.size()); // Copy orders
         for(int i=0;i<other.customersList.size();i++){
-    //something about the pair type
             this->customersList[i]=other.customersList[i];
+        }
+        for (int j = 0; j < customersList.size(); ++j) {
+            OrderPair p(other.orderList[j].first,other.orderList[j].second);
+            orderList.push_back(p);
+
         }
 
         //this->orderList.resize(other.orderList.size()); // Copy customers
@@ -105,6 +110,8 @@
         }
 
         void Table::closeTable(){
+
+           this->clean();
 
             open=false;
         }
