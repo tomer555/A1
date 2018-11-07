@@ -2,6 +2,8 @@
 
 
 //--------------------------------Customer-------------------------------------------------
+
+
 //Constructor Memory initialization
 Customer::Customer(std::string c_name, int c_id):name(std::move(c_name)),id(c_id){}
 

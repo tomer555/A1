@@ -4,7 +4,9 @@
 #include <vector>
 #include <string>
 #include "Dish.h"
-
+enum CustomerType{
+	VEGT, CHP,SPCY, ALCO,
+};
 class Customer{
 public:
 	virtual Customer* clone() const = 0;
