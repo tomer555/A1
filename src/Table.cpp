@@ -75,6 +75,7 @@
             delete customersList[i];
             customersList[i]= nullptr;
         }
+
         orderList.clear(); // clean orders
     }
 

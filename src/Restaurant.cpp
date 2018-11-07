@@ -113,7 +113,7 @@ void Restaurant::copy(const Restaurant & rest)  {
 
     this->tables.resize(rest.tables.size()); // Copy Tables
     for(int i=0;i<rest.tables.size();i++){
-        this->tables[i]=rest.tables[i];//will activate Table's copy constructor
+        this->tables.push_back(new Table(*rest.tables[i]));//will activate Table's copy constructor
     }
 
     //this->menu.resize(rest.menu.size()); //Maybe not necessary
@@ -124,7 +124,7 @@ void Restaurant::copy(const Restaurant & rest)  {
 
     this->actionsLog.resize(rest.actionsLog.size()); //Copy actionLog
     for(int i=0;i<rest.actionsLog.size();i++){
-        this->actionsLog[i]=rest.actionsLog[i]->clone();
+        this->actionsLog.push_back(rest.actionsLog[i]->clone());
     }
 //clone the BaseAction and will return a pointer to the new BaseAction
 }
