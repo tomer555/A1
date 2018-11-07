@@ -14,9 +14,11 @@ Restaurant::Restaurant(const std::string &configFilePath):open(true),actionsLog(
     std::vector<std::string> initialze;
     std::vector<std::string> vec = splitString(configFilePath, "[\\r\\n]+");
     for(int i=0;i<vec.size();i++){
-        if(vec[i]!="\n" && vec[i]!=" \n" && vec[i].find('#') == std::string::npos){
+
+        if(vec[i]!="\n" && vec[i].at(0) !=' ' && vec[i].find('#') == std::string::npos){
             std::vector<std::string> split=splitStringComma(vec[i]);
             for(int j=0;j<split.size();j++){
+                std::cout<<split[j]<<"\n";
                 initialze.push_back(split[j]);
             }
         }
@@ -27,9 +29,11 @@ Restaurant::Restaurant(const std::string &configFilePath):open(true),actionsLog(
         for (int i = 1; i < numOfTables + 1; i++) {
             tables.push_back(new Table(atoi(initialze[i].c_str())));
         }
+        int dishid=0;
         for (int j = numOfTables + 1;j< initialze.size(); j=j+3) {
-            Dish d(atoi(initialze[j].c_str()),initialze[j+1],atoi(initialze[j+2].c_str()),convert(initialze[j+3]));
+            Dish d(dishid,initialze[j],atoi(initialze[j+2].c_str()),convertDish(initialze[j+1]));
             menu.push_back(d);
+            dishid++;
         }
     }
 
@@ -109,7 +113,7 @@ void Restaurant::copy(const Restaurant & rest)  {
 
     this->tables.resize(rest.tables.size()); // Copy Tables
     for(int i=0;i<rest.tables.size();i++){
-        this->tables[i]=rest.tables[i];//will activate Table's copy constructor
+        this->tables.push_back(new Table(*rest.tables[i]));//will activate Table's copy constructor
     }
 
     //this->menu.resize(rest.menu.size()); //Maybe not necessary
@@ -120,7 +124,7 @@ void Restaurant::copy(const Restaurant & rest)  {
 
     this->actionsLog.resize(rest.actionsLog.size()); //Copy actionLog
     for(int i=0;i<rest.actionsLog.size();i++){
-        this->actionsLog[i]=rest.actionsLog[i]->clone();
+        this->actionsLog.push_back(rest.actionsLog[i]->clone());
     }
 //clone the BaseAction and will return a pointer to the new BaseAction
 }
@@ -143,15 +147,36 @@ std::vector<std::string> Restaurant:: splitString(const std::string& stringToSpl
 }
 
 std::vector<std::string> Restaurant:: splitStringComma(const std::string& stringToSplit){
-    std::stringstream ss(stringToSplit);
+    //std::stringstream ss(stringToSplit);
     std::vector<std::string> result;
+
+
+
+        std::regex words_regex(",|:|-|\\s+");
+        auto words_begin = std::sregex_iterator(stringToSplit.begin(), stringToSplit.end(), words_regex);
+        auto words_end = std::sregex_iterator();
+
+        for (std::sregex_iterator i = words_begin; i != words_end; ++i)
+            std::cout << (*i).str() << '\n';
+
+    /*
     while( ss.good() )
     {
-        std::string substr;
-        getline( ss, substr, ',' );
-        result.push_back( substr );
+        std::string substr1;
+        std::string substr2;
+        std::stringstream s1(ss.str());
+        getline( ss, substr1, ',');
+        getline( s1, substr2, ' ');
+        if(substr1.size()<substr2.size())
+            result.push_back( substr1 );
+        else
+            ss<<s1.str();
+            result.push_back( substr2 );
+
+
     }
     return result;
+     */
 }
 //Returns the number of tables in the Restaurant
 int Restaurant:: getNumOfTables() const{
@@ -183,21 +208,7 @@ const std::vector<BaseAction*>& Restaurant :: getActionsLog() const{
     return actionsLog;
 }
 
-
-// Main function of Restaurant: Open the restaurant and execute commands.
-void Restaurant :: start() {
-    std::cout << "Restaurant is now open!";
-    std::string userInput;
-    std::cin >> userInput;
-    while (userInput != "closeall") {
-
-
-        std::cin >> userInput;
-    }
-}
-
-
-DishType Restaurant ::convert(const std::string& str)const {
+DishType Restaurant ::convertDish(const std::string& str)const {
 
     if (str == "BVG")
         return BVG;
@@ -210,4 +221,132 @@ DishType Restaurant ::convert(const std::string& str)const {
 
     return SPC;
 }
+
+CustomerType Restaurant ::convertCustomer(const std::string& str)const {
+
+    if (str == "chp")
+        return CHP;
+    else if (str == "veg")
+        return VEGT;
+    else if (str == "alc")
+        return ALCO;
+    else if (str == "spc")
+        return SPCY;
+
+    return CHP;
+}
+
+
+Command Restaurant ::convertCommand(const std::string& str)const {
+
+    if (str == "open")
+        return OPEN;
+    else if (str == "order")
+        return ORDER;
+    else if (str == "close")
+        return CLOSE;
+    else if (str == "move")
+        return MOVE;
+    else if (str == "status")
+        return STATUS;
+    else if (str == "log")
+        return LOG;
+    else if (str == "closeall")
+        return CLOSEALL;
+    else if (str == "restore")
+        return RESTORE;
+    else if (str == "menu")
+        return MENU;
+    else if (str == "backup")
+        return BACKUP;
+    return LOG;
+}
+// Main function of Restaurant: Open the restaurant and execute commands.
+void Restaurant :: start() {
+    std::cout << "Restaurant is now open!";
+    std::string userInput;
+    std::cin >> userInput;
+
+    while (userInput != "closeall") {
+        std::vector<std::string> words= splitStringComma(userInput);
+        Command command=convertCommand(words[0]);
+        switch (command) {
+
+            case OPEN: {
+                int tableId = atoi(words[1].c_str());
+                std::vector<Customer *> customers_temp;
+                int index = 0;
+                for (int i = 2; i < words.size(); i = i + 2) {
+                    Customer *temp = nullptr;
+                    switch (convertCustomer(words[i + 1])) {
+                        case CHP :
+                            temp = new CheapCustomer(words[i], index);
+                            break;
+                        case VEGT :
+                            temp = new VegetarianCustomer(words[i], index);
+                            break;
+                        case SPCY :
+                            temp = new SpicyCustomer(words[i], index);
+                            break;
+                        case ALCO :
+                            temp = new AlchoholicCustomer(words[i], index);
+                            break;
+                    }
+                    customers_temp.push_back(temp);
+                }
+                OpenTable *temp_open = new OpenTable(tableId, customers_temp);
+                actionsLog.push_back(temp_open);
+                (*temp_open).act(*this);
+                break;
+            }
+
+            case ORDER : {
+                int tableId = atoi(words[1].c_str());
+                actionsLog.push_back(new Order(tableId));
+                break;
+            }
+
+
+            case CLOSE: {
+                int tableId = atoi(words[1].c_str());
+                actionsLog.push_back(new Close(tableId));
+                break;
+            }
+
+            case MOVE: {
+                int srcTableId = atoi(words[1].c_str());
+                int dstTableId = atoi(words[2].c_str());
+                int customerId = atoi(words[3].c_str());
+
+
+                break;
+            }
+
+            case STATUS:
+                break;
+
+            case LOG:
+                break;
+            case BACKUP:
+                break;
+            case RESTORE:
+                break;
+            case MENU:
+                break;
+
+            case CLOSEALL:
+                break;
+        }
+
+
+
+
+        std::cin >> userInput;
+        }
+    }
+
+
+
+
+
 

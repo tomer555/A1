@@ -10,6 +10,10 @@ enum ActionStatus{
     PENDING, COMPLETED, ERROR
 };
 
+enum Command{
+	OPEN, CLOSE,CLOSEALL, ORDER, STATUS, LOG,MOVE,MENU,RESTORE,BACKUP
+};
+
 //Forward declaration
 class Restaurant;
 
