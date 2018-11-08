@@ -154,7 +154,6 @@ Table & Table:: operator=(const Table& other)  {
 
             for (int i = 0; i < customersList.size(); ++i) {
                 if (customersList[i]->getId()==id){
-                    delete customersList[i];
                         customersList.erase(customersList.begin()+i);
                 }
              }
@@ -162,7 +161,7 @@ Table & Table:: operator=(const Table& other)  {
 
         Customer*  Table::getCustomer(int id) {
 
-            for (int i = 0; i < customersList.size(); ++i) {
+            for (int i = 0; i < customersList.size(); i++) {
                 if (customersList[i]->getId() == id)
                     return customersList[i];
 
@@ -210,4 +209,9 @@ OrderPair Table:: makeOrder(int customerId,Dish dish)const{
     OrderPair p(customerId,dish);
     return p;
 
+}
+
+
+void Table:: setOrderList(std::vector<OrderPair> toset){
+    orderList=std::move(toset);
 }

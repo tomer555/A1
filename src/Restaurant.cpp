@@ -6,11 +6,14 @@
 
 
 //Empty constructor
-Restaurant::Restaurant():open(true),tables(),actionsLog(),menu(){}
+Restaurant::Restaurant():open(true),tables(),actionsLog(),menu(){
+    index=new int(0);
+}
 
 
 //constructor
 Restaurant::Restaurant(const std::string &configFilePath):open(true),actionsLog() {
+    index=new int(0);
     std::vector<std::string> initialze;
     std::vector<std::string> vec = splitString(configFilePath, "[\\r\\n]+");
     for(int i=0;i<vec.size();i++){
@@ -205,7 +208,21 @@ CustomerType Restaurant ::convertCustomer(const std::string& str)const {
     return CHP;
 }
 
+std::string Restaurant :: convetAction(ActionStatus action)const{
+    switch (action){
+        case PENDING:
+            return "Pending";
+        case COMPLETED:
+            return "Completed";
+        case ERROR:
+            return "Error";
+    }
 
+
+
+
+
+}
 Command Restaurant ::convertCommand(const std::string& str)const {
 
     if (str == "open")
@@ -233,10 +250,11 @@ Command Restaurant ::convertCommand(const std::string& str)const {
 // Main function of Restaurant: Open the restaurant and execute commands.
 void Restaurant :: start() {
     std::cout << "Restaurant is now open!";
-    std::string userInput;
-    getline(std::cin, userInput);
+    std::string userInput="start";
+
 
     while (userInput != "closeall") {
+        getline(std::cin, userInput);
         std::vector<std::string> words= splitString(userInput,"[, \\s]+");
         Command command=convertCommand(words[0]);
 
@@ -245,24 +263,24 @@ void Restaurant :: start() {
             case OPEN: {
                 int tableId = atoi(words[1].c_str());
                 std::vector<Customer *> customers_temp;
-                int index = 0;
                 for (int i = 2; i < words.size(); i = i + 2) {
                     Customer *temp = nullptr;
                     switch (convertCustomer(words[i + 1])) {
                         case CHP :
-                            temp = new CheapCustomer(words[i], index);
+                            temp = new CheapCustomer(words[i], *index);
                             break;
                         case VEGT :
-                            temp = new VegetarianCustomer(words[i], index);
+                            temp = new VegetarianCustomer(words[i], *index);
                             break;
                         case SPCY :
-                            temp = new SpicyCustomer(words[i], index);
+                            temp = new SpicyCustomer(words[i], *index);
                             break;
                         case ALCO :
-                            temp = new AlchoholicCustomer(words[i], index);
+                            temp = new AlchoholicCustomer(words[i], *index);
                             break;
                     }
                     customers_temp.push_back(temp);
+                    (*index)++;
                 }
                 OpenTable *temp_open = new OpenTable(tableId, customers_temp);
                 actionsLog.push_back(temp_open);
@@ -335,7 +353,7 @@ void Restaurant :: start() {
                 break;
             }
         }
-        getline(std::cin, userInput);
+
         }
     }
 

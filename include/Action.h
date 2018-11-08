@@ -73,6 +73,7 @@ private:
 class MoveCustomer : public BaseAction {
 public:
     MoveCustomer(int src, int dst, int customerId);
+    void moveOrder(Table & src,Table & dst ,int customerId)const;
 	virtual MoveCustomer * clone() const;
     bool validCustomer(Customer *customer, Table* src_T)const;
     void act(Restaurant &restaurant);

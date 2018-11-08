@@ -55,17 +55,18 @@ bool BaseAction ::validTable(Table *table) const {
 
 //Constructor OpenTable
 OpenTable ::OpenTable(int id, std::vector<Customer *> &customersList):BaseAction(),tableId(id),customers(std::move(customersList)){
+    setArgs(id,customersList);
 }
 
 void OpenTable::setArgs (int id, std::vector<Customer *> &customersList){
     std:: stringstream s1;
     std:: string  output;
-    s1 <<id;
-    output=s1.str();
-    for(int i =0 ; i<customersList.size();i++){
-        output+=customersList[i]->toString();
+    s1 <<id<<" ";
+
+    for(int i =0 ; i<customers.size();i++){
+        output.append(customers[i]->toString());
     }
-    setActionArgs(output);
+    setActionArgs(s1.str()+output);
 }
 
 
@@ -74,43 +75,23 @@ void OpenTable::setArgs (int id, std::vector<Customer *> &customersList){
 void OpenTable ::act(Restaurant &restaurant){
     Table *temp=restaurant.getTable(tableId);
 
-        if(validTable(temp)) {
-            if(!(*temp).isOpen()){
+        if(validTable(temp) && !(*temp).isOpen()) {
 
-            try {
                 for (int i = 0; i < customers.size(); i++)
                     (*temp).addCustomer(customers[i]);//Add Customer to the Table
                 (*temp).openTable();
                 this->complete(); //without any exceptions change to complete
-            }
-            catch (std::exception &e) { //Catch exception thrown from addCustomer
-                this->error("Failed to add a customer");
-            }
-        } else{
-            std::stringstream myError;
-            myError <<"Table no: "<<tableId<<" is Already open";
-            this->error(myError.str());
-        }
 
-    } else {
-        std::stringstream myError;
-        myError << "Table no: " << tableId << " doesn't exist Or invalid Table id";
-        this->error(myError.str());
-    }
+        } else{
+            std::string output="Error: Table does not exist or is already open";
+            std::cout <<output;
+            this->error(output);
+        }
 }
 
 //Prints the OpenTable action with all it's details
 std::string OpenTable :: toString() const{
-    std::stringstream s1;
-    std::stringstream s2;
-    s1 <<"Open Table number: "<<tableId<< ", with the following customers:\n";
-    std::string output =s1.str();
-    for (int i = 0; i <customers.size() ; ++i) {
-       s2<<customers[i]->toString()<< "\n";
-       output+=s2.str();
-    }
-
-    return output;
+    return "open";
 }
 
 OpenTable *OpenTable::clone() const {
@@ -138,9 +119,7 @@ void Order ::act(Restaurant &restaurant){
 
 //Prints the Order action with the Table number
 std::string Order :: toString() const {
-    std::stringstream s1;
-    s1 << "Taking Order from Table number: " << tableId;
-    return s1.str();
+    return "order";
 }
 
 Order* Order::clone() const{
@@ -162,16 +141,33 @@ void MoveCustomer ::act(Restaurant &restaurant) {
     Customer *temp_c = (*temp_src).getCustomer(id);
     if (validTable(temp_src)&&validTable(temp_dst) && //valid checks
             (*temp_src).isOpen() &&(*temp_dst).isOpen()&&//open checks
-            validCustomer(temp_c, temp_src)){ //costumer check
+            validCustomer(temp_c, temp_src)) { //costumer check
         (*temp_dst).addCustomer(temp_c);//add customer to destination Table
+        moveOrder(*temp_src, *temp_dst, id);
         (*temp_src).removeCustomer(id);
         if ((*temp_src).getCustomers().empty()) {// check if src Table is empty
             (*temp_src).closeTable();
-
-        } else
+        }
+        this->complete();
+    }
+    else
             this->error("Cannot move Customer");
     }
 
+
+
+void MoveCustomer:: moveOrder(Table & src,Table & dst ,int customerId)const {
+    std::vector<OrderPair> orders = src.getOrders();
+    std::vector<OrderPair> new_src;
+    for (int i = 0; i < src.getOrders().size(); i++) {
+        if (orders[i].first == customerId) {
+            dst.getOrders().push_back(orders[i]);
+        } else{
+            new_src.push_back(orders[i]);
+        }
+    }
+    orders.clear();
+    src.setOrderList(new_src);
 }
 
 
@@ -203,7 +199,7 @@ Close ::Close(int id): BaseAction(),tableId(id){
 void Close ::act(Restaurant &restaurant){
     Table *temp=restaurant.getTable(tableId);
     if(validTable(temp)&& (*temp).isOpen() ) { //valid check and open check
-        std::cout<<"Table "<<tableId<<" was closed. Bill "<<(*temp).getBill()<<"NIS";
+        std::cout<<"Table "<<tableId<<" was closed. Bill "<<(*temp).getBill()<<"NIS"<<"\n";
         (*temp).closeTable();
         (*temp).openTable();
         this->complete();
@@ -214,9 +210,7 @@ void Close ::act(Restaurant &restaurant){
 
 //Prints the Close action with the Table number
 std::string Close :: toString() const {
-    std::stringstream s1;
-    s1 << "Closing Table number:" << tableId;
-    return s1.str();
+    return "close";
 }
 
 Close * Close:: clone() const{
@@ -232,20 +226,21 @@ CloseAll ::CloseAll(): BaseAction(){
 void CloseAll ::act(Restaurant &restaurant) {
     std::vector<Table *> Table_vec = restaurant.getTables();
 //each table that is open will be closed and the bill will be printed in increasing order
-    for(int i = 0; i < Table_vec.size(); i++) {
-        if (Table_vec[i]->isOpen())
-            Table_vec[i]->closeTable();
-    }
-this->complete();
-    //restaurant need to be close now? or when we go back from the function
+    for (int i = 0; i < Table_vec.size(); i++) {
+        if (Table_vec[i]->isOpen()) {
+            BaseAction *temp = new Close(i);
+            temp->act(restaurant);
+            delete temp;
+        }
+        this->complete();
+        //restaurant need to be close now? or when we go back from the function
 
+    }
 }
 
 //Prints the Close action with the Table number
 std::string CloseAll :: toString() const{
-    std::stringstream s1;
-    s1 <<"Closing All Tables and closing the restaurant";
-    return s1.str();
+    return "closeall";
 }
 
 CloseAll * CloseAll:: clone() const{
@@ -283,7 +278,7 @@ PrintTableStatus ::PrintTableStatus(int id): BaseAction() ,tableId(id){
 void PrintTableStatus ::act(Restaurant &restaurant) {
     Table *temp = restaurant.getTable(tableId);
     std::stringstream s1;
-    std::stringstream s2;
+
     if ((*temp).isOpen()) {
         s1 << "Table " << tableId << " status: open\n";
         std::cout << s1.str();
@@ -294,26 +289,24 @@ void PrintTableStatus ::act(Restaurant &restaurant) {
     std::cout << "Customers:\n";
     std::vector<Customer *> customers = (*temp).getCustomers();
     for (int i = 0; i < customers.size(); i++) {
-        std::string output = customers[i]->toString();
-        std::cout << output << "\n";
+        std::cout << customers[i]->getId()<<" "<<customers[i]->getName()<<"\n";
     }
     std::cout << "Orders:\n";
     std::vector<OrderPair> orders = (*temp).getOrders();
     for (int i = 0; i < orders.size(); i++) {
+        std::stringstream s2;
         s2 << orders[i].second.toString() << " " << orders[i].first;
         std::cout << s2.str() << "\n";
     }
 
-    std::cout << "Current bill:\n" << (*temp).getBill();
+    std::cout << "Current bill: " << (*temp).getBill()<<"NIS";
     this->complete();
 }
 
 
 //Prints the Table status, customers list, orders and bill
 std::string PrintTableStatus :: toString() const{
-    std::stringstream s1;
-    s1 <<"Prints the Table status, customers list, orders and bill";
-    return s1.str();
+    return "status";
 }
 
 PrintTableStatus * PrintTableStatus:: clone()const{
@@ -333,7 +326,7 @@ void PrintActionsLog ::act(Restaurant &restaurant) {
         if(actions[i]->getStatus()==ERROR){
             std::cout <<actions[i]->toString()<<" "<<actions[i]->getActionArgs()<<" "<< actions[i]->getErrorMsg()<<"\n";
         } else
-            std::cout <<actions[i]->toString()<<" "<<actions[i]->getActionArgs()<<" "<< actions[i]->getStatus()<<"\n";
+            std::cout <<actions[i]->toString()<<" "<<actions[i]->getActionArgs()<<" "<< restaurant.convetAction(actions[i]->getStatus())<<"\n";
     }
     this->complete();
 }

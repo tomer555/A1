@@ -7,6 +7,8 @@
 
 typedef std::pair<int, Dish> OrderPair;
 
+
+
 class Table{
 public:
     Table(int t_capacity);
@@ -24,6 +26,7 @@ public:
     void addCustomer(Customer* customer);
     OrderPair makeOrder(int customerId,Dish dish)const;
     void removeCustomer(int id);
+    void setOrderList(std::vector<OrderPair> toset);
     Customer* getCustomer(int id);
     std::vector<Customer*>& getCustomers();
     std::vector<OrderPair>& getOrders();

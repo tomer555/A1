@@ -9,6 +9,8 @@ name(std::move(d_name)),
 price(d_price),
 type(d_type){}
 
+
+
 //Returns the Dish Name
 std::string Dish :: getName() const{
     return this->name;
@@ -30,6 +32,6 @@ DishType Dish:: getType() const{
 
 std::string Dish :: toString() const{
     std::stringstream s1;
-    s1 <<name<<" "<<type<<price<<"NIS";
+    s1 <<name<<" "<<price<<"NIS";
     return s1.str();
 }

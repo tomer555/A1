@@ -55,12 +55,14 @@ public:
     std::vector<std::string> splitStringComma(const std::string& stringToSplit);
     DishType convertDish(const std::string& str)const;
     Command convertCommand(const std::string& str)const;
+    std::string convetAction(ActionStatus action)const;
     CustomerType convertCustomer(const std::string& str)const;
 
 
 
     //------------------Members--------------------------------------
 private:
+    int *index;
     bool open;
     std::vector<Table*> tables;
     std::vector<Dish> menu;

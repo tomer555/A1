@@ -13,7 +13,7 @@ int main(int argc, char** argv){
         return 0;
     }
     //string configurationFile = argv[1];
-    string configurationFile="#number of tables\n6\n#tables description\n6,4,4,14,10,10\n#Menu\nBeer,ALC,50\nSalad,VEG,40\nWater,BVG,10\nWine,ALC,60\nChili Con Carne,SPC,200";
+    string configurationFile="#Config file 2\n#number of tables\n6\n#tables description\n6,4,4,14,10,10\n#Menu\nButterbeer,ALC,50\nFire Whisky,ALC,60\nHoney Wine,ALC,80\nWater,BVG,20\nPumpkin Juice,BVG,40\nPumpkin Cake,VEG,50\nSpicy meat,SPC,300";
     Restaurant rest(configurationFile);
     rest.start();
     if(backup!=nullptr){

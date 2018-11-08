@@ -1,3 +1,4 @@
+#include <sstream>
 #include "../include/Customer.h"
 
 
@@ -17,7 +18,7 @@ std::string Customer:: getName() const{
 
 //Returns the Customer's ID number
 int Customer:: getId() const {
-    this->id;
+    return this->id;
 }
 
 
@@ -103,7 +104,9 @@ VegetarianCustomer* VegetarianCustomer:: clone() const{
 }
 
 std::string VegetarianCustomer::toString() const {
-    return std::__cxx11::string();
+    std::stringstream ss;
+    ss <<this->getName()<<",veg ";
+    return ss.str();
 }
 
 //--------------------------------CheapCustomer-------------------------------------------------
@@ -139,7 +142,9 @@ CheapCustomer* CheapCustomer:: clone() const{
 }
 
 std::string CheapCustomer::toString() const {
-    return std::__cxx11::string();
+    std::stringstream ss;
+    ss <<this->getName()<<",chp ";
+    return ss.str();
 }
 
 
@@ -157,9 +162,10 @@ std::vector<int> SpicyCustomer:: order(const std::vector<Dish> &menu){
     std::vector<int> output;
     if (menu.empty())//check if dish menu is empty - if so return empty vector
         return output;
-    if(!firstOrder)  // SpicyCustomer first order
-        orderExpensive(output,menu,SPC); //will order the most expensive spicy dish if exist
-
+    if(!firstOrder) { // SpicyCustomer first order
+        orderExpensive(output, menu, SPC);//will order the most expensive spicy dish if exist
+        firstOrder = true;
+    }
     else
         orderCheapest(output,menu,BVG);//will order the cheapest non Alc  if exist
 
@@ -167,7 +173,9 @@ std::vector<int> SpicyCustomer:: order(const std::vector<Dish> &menu){
 }
 
 std::string SpicyCustomer::toString() const {
-    return std::__cxx11::string();
+    std::stringstream ss;
+    ss <<this->getName()<<",spc ";
+    return ss.str();
 }
 
 
@@ -233,7 +241,9 @@ std::vector<int> AlchoholicCustomer:: order(const std::vector<Dish> &menu) {
 }
 
 std::string AlchoholicCustomer::toString() const {
-    return std::__cxx11::string();
+    std::stringstream ss;
+    ss <<this->getName()<<",alc ";
+    return ss.str();
 }
 //-------------------------------------------------------------------------------------------------------------------------------
 
