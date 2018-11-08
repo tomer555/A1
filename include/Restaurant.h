@@ -3,6 +3,7 @@
 
 #include <vector>
 #include <string>
+#include <memory>
 #include "Dish.h"
 #include "Table.h"
 #include "Action.h"

@@ -8,7 +8,7 @@
 
 //----------------------BaseAction--------------------------------------------
 //Empty Constructor
-BaseAction::BaseAction(): status(PENDING),errorMsg(nullptr),ActionArgs(""){}
+BaseAction::BaseAction(): status(PENDING),errorMsg(""),ActionArgs(""){}
 
 
 //Empty Destructor
@@ -54,7 +54,7 @@ bool BaseAction ::validTable(Table *table) const {
 //-----------------------------OpenTable------------------------------
 
 //Constructor OpenTable
-OpenTable ::OpenTable(int id, std::vector<Customer *> &customersList):BaseAction(),tableId(id),customers(customersList){
+OpenTable ::OpenTable(int id, std::vector<Customer *> &customersList):BaseAction(),tableId(id),customers(std::move(customersList)){
 }
 
 void OpenTable::setArgs (int id, std::vector<Customer *> &customersList){

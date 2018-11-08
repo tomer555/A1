@@ -16,9 +16,9 @@ Restaurant::Restaurant(const std::string &configFilePath):open(true),actionsLog(
     for(int i=0;i<vec.size();i++){
 
         if(vec[i]!="\n" && vec[i].at(0) !=' ' && vec[i].find('#') == std::string::npos){
-            std::vector<std::string> split=splitStringComma(vec[i]);
+            std::vector<std::string> split=splitString(vec[i], "[,]+");
             for(int j=0;j<split.size();j++){
-                std::cout<<split[j]<<"\n";
+
                 initialze.push_back(split[j]);
             }
         }
@@ -146,38 +146,7 @@ std::vector<std::string> Restaurant:: splitString(const std::string& stringToSpl
     return result;
 }
 
-std::vector<std::string> Restaurant:: splitStringComma(const std::string& stringToSplit){
-    //std::stringstream ss(stringToSplit);
-    std::vector<std::string> result;
 
-
-
-        std::regex words_regex(",|:|-|\\s+");
-        auto words_begin = std::sregex_iterator(stringToSplit.begin(), stringToSplit.end(), words_regex);
-        auto words_end = std::sregex_iterator();
-
-        for (std::sregex_iterator i = words_begin; i != words_end; ++i)
-            std::cout << (*i).str() << '\n';
-
-    /*
-    while( ss.good() )
-    {
-        std::string substr1;
-        std::string substr2;
-        std::stringstream s1(ss.str());
-        getline( ss, substr1, ',');
-        getline( s1, substr2, ' ');
-        if(substr1.size()<substr2.size())
-            result.push_back( substr1 );
-        else
-            ss<<s1.str();
-            result.push_back( substr2 );
-
-
-    }
-    return result;
-     */
-}
 //Returns the number of tables in the Restaurant
 int Restaurant:: getNumOfTables() const{
     return static_cast<int>(tables.size());
@@ -189,7 +158,7 @@ Table* Restaurant:: getTable(int ind){
    if(ind<0 || ind>getNumOfTables())
        return nullptr;
 
-    return tables.at(static_cast<unsigned int>(ind));
+    return tables[ind];
 
 }
 //Returns a reference to the Menu vector
@@ -265,11 +234,12 @@ Command Restaurant ::convertCommand(const std::string& str)const {
 void Restaurant :: start() {
     std::cout << "Restaurant is now open!";
     std::string userInput;
-    std::cin >> userInput;
+    getline(std::cin, userInput);
 
     while (userInput != "closeall") {
-        std::vector<std::string> words= splitStringComma(userInput);
+        std::vector<std::string> words= splitString(userInput,"[, \\s]+");
         Command command=convertCommand(words[0]);
+
         switch (command) {
 
             case OPEN: {
@@ -302,7 +272,9 @@ void Restaurant :: start() {
 
             case ORDER : {
                 int tableId = atoi(words[1].c_str());
-                actionsLog.push_back(new Order(tableId));
+                Order *temp=new Order(tableId);
+                (*temp).act(*this);
+                actionsLog.push_back(temp);
                 break;
             }
 
@@ -317,31 +289,53 @@ void Restaurant :: start() {
                 int srcTableId = atoi(words[1].c_str());
                 int dstTableId = atoi(words[2].c_str());
                 int customerId = atoi(words[3].c_str());
-
-
+                MoveCustomer *move=new MoveCustomer(srcTableId,dstTableId,customerId);
+                move->act(*this);
+                actionsLog.push_back(move);
                 break;
             }
 
-            case STATUS:
+            case STATUS:{
+                int tableId=atoi(words[1].c_str());
+                PrintTableStatus *status=new PrintTableStatus(tableId);
+                status->act(*this);
+                actionsLog.push_back(status);
                 break;
 
-            case LOG:
-                break;
-            case BACKUP:
-                break;
-            case RESTORE:
-                break;
-            case MENU:
-                break;
+            }
 
-            case CLOSEALL:
+            case LOG: {
+                PrintActionsLog *log = new PrintActionsLog();
+                log->act(*this);
+                actionsLog.push_back(log);
+            }
                 break;
+            case BACKUP: {
+                BackupRestaurant *backup=new BackupRestaurant();
+                backup->act(*this);
+                actionsLog.push_back(backup);
+                break;
+            }
+            case RESTORE: {
+                RestoreResturant * restore = new RestoreResturant();
+                restore->act(*this);
+                actionsLog.push_back(restore);
+                break;
+            }
+            case MENU: {
+                PrintMenu *menu=new PrintMenu();
+                menu->act(*this);
+                actionsLog.push_back(menu);
+                break;
+            }
+            case CLOSEALL: {
+                CloseAll *closeAll=new CloseAll();
+                closeAll->act(*this);
+                actionsLog.push_back(closeAll);
+                break;
+            }
         }
-
-
-
-
-        std::cin >> userInput;
+        getline(std::cin, userInput);
         }
     }
 

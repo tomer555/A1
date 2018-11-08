@@ -2,6 +2,7 @@
 // Created by ofirx on 01/11/18.
 //
 
+#include <iostream>
 #include "../include/Table.h"
 
 // #include <shared_ptr>   why is not it working?
@@ -12,8 +13,8 @@
 
     // a constructor+member initializer lists
 
-    Table::Table (int t_capacity) : capacity(t_capacity),orderList(),customersList(),open(){
-        openTable();
+    Table::Table (int t_capacity) : capacity(t_capacity),orderList(),customersList(),open(false){
+
         }
 
     // a copy constructor
@@ -162,7 +163,8 @@ Table & Table:: operator=(const Table& other)  {
         Customer*  Table::getCustomer(int id) {
 
             for (int i = 0; i < customersList.size(); ++i) {
-                if (customersList[i]->getId() == id) return customersList[i];
+                if (customersList[i]->getId() == id)
+                    return customersList[i];
 
             }
         }
@@ -194,8 +196,10 @@ Table & Table:: operator=(const Table& other)  {
                     std::vector<int> customerOrder = customersList[i]->order(menu);
                     for (int j = 0; j < customerOrder.size(); ++j) {
                         for (int k = 0; k < menu.size(); ++k) {
-                            if (menu[k].getId() == customerOrder[j])
-                                orderList.push_back(makeOrder(customersList[i]->getId(),menu[k]));
+                            if (menu[k].getId() == customerOrder[j]) {
+                                orderList.push_back(makeOrder(customersList[i]->getId(), menu[k]));
+                                std::cout <<customersList[i]->getName()<<" ordered "<<menu[k].getName()<<"\n";
+                            }
 
                         }
                     }
