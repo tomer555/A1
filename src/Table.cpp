@@ -114,10 +114,9 @@ Table & Table:: operator=(const Table& other)  {
         }
 
         void Table::closeTable(){
-
-           this->clean();
-
-            open=false;
+           orderList.clear();
+           customersList.clear();
+           open=false;
         }
 
         void Table::openTable(){

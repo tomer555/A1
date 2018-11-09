@@ -8,8 +8,10 @@
 #include "Table.h"
 #include "Action.h"
 
+extern Restaurant* backup;
 
 class Restaurant{
+
 
     //-----------------Constructors-----------------------------------
 public:

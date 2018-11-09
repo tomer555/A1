@@ -338,35 +338,47 @@ std::string PrintActionsLog :: toString() const{
 PrintActionsLog * PrintActionsLog:: clone()const{
     return new PrintActionsLog(*this);
 }
-//--------------------------------------------------------------------------------------------
-BackupRestaurant *BackupRestaurant::clone() const {
-    return nullptr;
-}
+//----------------------------------BackupRestaurant----------------------------------------------------------
 
-BackupRestaurant::BackupRestaurant() {
 
+BackupRestaurant::BackupRestaurant():BaseAction() {
 }
 
 void BackupRestaurant::act(Restaurant &restaurant) {
-
+    if(backup== nullptr){
+        backup=new Restaurant();
+    }
+    *backup=restaurant;// activating copy assignment
+    this->complete();
 }
+
 
 std::string BackupRestaurant::toString() const {
-    return std::__cxx11::string();
+    return "backup";
 }
 
-RestoreResturant *RestoreResturant::clone() const {
-    return nullptr;
+BackupRestaurant *BackupRestaurant::clone() const {
+    return new BackupRestaurant(*this);
+}
+//-----------------------------RestoreRestaurant-------------------------------
+
+
+
+RestoreRestaurant::RestoreRestaurant():BaseAction() {
 }
 
-RestoreResturant::RestoreResturant() {
-
+void RestoreRestaurant::act(Restaurant &restaurant) {
+if(backup== nullptr){
+    return this->error("There is no backup available");
+} else{
+    restaurant=*backup; //activating copy assignment
+    this->complete();
+}
 }
 
-void RestoreResturant::act(Restaurant &restaurant) {
-
+std::string RestoreRestaurant::toString() const {
+    return "restore";
 }
-
-std::string RestoreResturant::toString() const {
-    return std::__cxx11::string();
+RestoreRestaurant *RestoreRestaurant::clone() const {
+    return new RestoreRestaurant(*this);
 }

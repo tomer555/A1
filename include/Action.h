@@ -155,10 +155,10 @@ private:
 };
 
 
-class RestoreResturant : public BaseAction {
+class RestoreRestaurant : public BaseAction {
 public:
-	virtual RestoreResturant * clone() const;
-    RestoreResturant();
+	virtual RestoreRestaurant * clone() const;
+    RestoreRestaurant();
     void act(Restaurant &restaurant);
     std::string toString() const;
 
