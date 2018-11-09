@@ -22,6 +22,7 @@ public:
     BaseAction();
 	virtual BaseAction * clone() const = 0;
     virtual ~BaseAction();
+	BaseAction(const BaseAction &rest);
     ActionStatus getStatus() const;
     virtual void act(Restaurant& restaurant)=0;
     virtual std::string toString() const=0;

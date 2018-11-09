@@ -96,7 +96,7 @@ Table & Table:: operator=(const Table& other)  {
         for(int i=0;i<other.customersList.size();i++){
             this->customersList.push_back(other.customersList[i]->clone());
         }
-        for (int j = 0; j < orderList.size(); ++j) {
+        for (int j = 0; j < other.orderList.size(); ++j) {
             OrderPair p(other.orderList[j].first,other.orderList[j].second);
             orderList.push_back(p);
 

@@ -52,6 +52,14 @@ bool BaseAction ::validTable(Table *table) const {
     }
     return output;
 }
+
+//copy constructor
+BaseAction::BaseAction(const BaseAction &rest) {
+    errorMsg=rest.errorMsg;
+    ActionArgs=rest.getActionArgs();
+    status=rest.status;
+
+}
 //-----------------------------OpenTable------------------------------
 
 //Constructor OpenTable
@@ -70,10 +78,10 @@ void OpenTable:: clear(){
     }
 }
 //copy constructor
-OpenTable ::OpenTable(const OpenTable &other):customers(other.cloneCustomers()), tableId(other.tableId){}
+OpenTable ::OpenTable(const OpenTable &other):BaseAction(other),customers(other.cloneCustomers()), tableId(other.tableId){}
 
 //move constructor
-OpenTable ::OpenTable(OpenTable &&other):tableId(other.tableId),customers(other.customers){
+OpenTable ::OpenTable(OpenTable &&other):BaseAction(),tableId(other.tableId),customers(other.customers){
 }
 
 
@@ -119,7 +127,7 @@ std::string OpenTable :: toString() const{
 }
 
 OpenTable *OpenTable::clone() const {
-    return new OpenTable(*this);// new OpenTable(*this);
+    return new OpenTable(*this);// activates copy constructor
 }
 
 
