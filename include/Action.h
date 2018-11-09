@@ -47,7 +47,15 @@ public:
 	virtual OpenTable* clone() const;
 
     OpenTable(int id, std::vector<Customer *> &customersList);
+    virtual ~OpenTable();
+    std::vector<Customer*>  cloneCustomers() const;
 
+    OpenTable(const OpenTable &rest);
+
+    OpenTable(OpenTable &&rest);
+
+
+    void clear();
     void act(Restaurant &restaurant);
 	void setArgs(int id, std::vector<Customer *> &customersList);
     std::string toString() const;

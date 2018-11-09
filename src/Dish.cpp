@@ -35,3 +35,5 @@ std::string Dish :: toString() const{
     s1 <<name<<" "<<price<<"NIS";
     return s1.str();
 }
+
+Dish::~Dish() {}

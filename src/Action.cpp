@@ -58,6 +58,25 @@ bool BaseAction ::validTable(Table *table) const {
 OpenTable ::OpenTable(int id, std::vector<Customer *> &customersList):BaseAction(),tableId(id),customers(std::move(customersList)){
     setArgs(id,customersList);
 }
+//Destructor
+OpenTable:: ~OpenTable(){
+    clear();
+}
+
+//clear
+void OpenTable:: clear(){
+    for(int i=0;i<customers.size();i++){
+        delete customers[i];
+    }
+}
+//copy constructor
+OpenTable ::OpenTable(const OpenTable &other):customers(other.cloneCustomers()), tableId(other.tableId){}
+
+//move constructor
+OpenTable ::OpenTable(OpenTable &&other):tableId(other.tableId),customers(other.customers){
+}
+
+
 
 void OpenTable::setArgs (int id, std::vector<Customer *> &customersList){
     std:: stringstream s1;
@@ -71,7 +90,13 @@ void OpenTable::setArgs (int id, std::vector<Customer *> &customersList){
 }
 
 
-
+std::vector<Customer*> OpenTable:: cloneCustomers() const{
+    std::vector<Customer*> output;
+    for(int i=0;i<customers.size();i++){
+        output.push_back(customers[i]->clone());
+    }
+    return output;
+}
 
 void OpenTable ::act(Restaurant &restaurant){
     Table *temp=restaurant.getTable(tableId);
@@ -94,7 +119,7 @@ std::string OpenTable :: toString() const{
 }
 
 OpenTable *OpenTable::clone() const {
-    return nullptr;// new OpenTable(*this);
+    return new OpenTable(*this);// new OpenTable(*this);
 }
 
 
@@ -280,24 +305,24 @@ void PrintTableStatus ::act(Restaurant &restaurant) {
     if ((*temp).isOpen()) {
         s1 << "Table " << tableId << " status: open\n";
         std::cout << s1.str();
+        std::cout << "Customers:\n";
+        std::vector<Customer *> customers = (*temp).getCustomers();
+        for (int i = 0; i < customers.size(); i++) {
+            std::cout << customers[i]->getId()<<" "<<customers[i]->getName()<<"\n";
+        }
+        std::cout << "Orders:\n";
+        std::vector<OrderPair> orders = (*temp).getOrders();
+        for (int i = 0; i < orders.size(); i++) {
+            std::stringstream s2;
+            s2 << orders[i].second.toString() << " " << orders[i].first;
+            std::cout << s2.str() << "\n";
+        }
+        std::cout << "Current bill: " << (*temp).getBill()<<"NIS";
     } else {
         s1 << "Table " << tableId << " status: close\n";
         std::cout << s1.str();
     }
-    std::cout << "Customers:\n";
-    std::vector<Customer *> customers = (*temp).getCustomers();
-    for (int i = 0; i < customers.size(); i++) {
-        std::cout << customers[i]->getId()<<" "<<customers[i]->getName()<<"\n";
-    }
-    std::cout << "Orders:\n";
-    std::vector<OrderPair> orders = (*temp).getOrders();
-    for (int i = 0; i < orders.size(); i++) {
-        std::stringstream s2;
-        s2 << orders[i].second.toString() << " " << orders[i].first;
-        std::cout << s2.str() << "\n";
-    }
 
-    std::cout << "Current bill: " << (*temp).getBill()<<"NIS";
     this->complete();
 }
 
@@ -346,9 +371,10 @@ BackupRestaurant::BackupRestaurant():BaseAction() {
 
 void BackupRestaurant::act(Restaurant &restaurant) {
     if(backup== nullptr){
-        backup=new Restaurant();
+        backup=new Restaurant(restaurant); //copy constructor
+    } else {
+        *backup = restaurant;// activating copy assignment
     }
-    *backup=restaurant;// activating copy assignment
     this->complete();
 }
 

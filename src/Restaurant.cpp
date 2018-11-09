@@ -44,7 +44,7 @@ Restaurant::Restaurant(const std::string &configFilePath):open(true),actionsLog(
 }
 
 //Copy Constructor
-Restaurant::Restaurant(const Restaurant &rest){
+Restaurant::Restaurant(const Restaurant &rest):tables(),actionsLog(),menu(){
     copy(rest);
 }
 
@@ -113,23 +113,27 @@ void Restaurant::clear()  {
 //Copy 'rest' fields into 'this'
 void Restaurant::copy(const Restaurant & rest)  {
     open=rest.open;
+    index=new int(*(rest.index));
 
-    this->tables.resize(rest.tables.size()); // Copy Tables
-    for(int i=0;i<rest.tables.size();i++){
+    //clone the BaseAction and will return a pointer to the new BaseAction
+    for(int i=0;i<rest.actionsLog.size();i++){//Copy actionLog
+        this->actionsLog.push_back(rest.actionsLog[i]->clone());
+    }
+
+
+
+    for(int i=0;i<rest.tables.size();i++){//restaurant
         this->tables.push_back(new Table(*rest.tables[i]));//will activate Table's copy constructor
     }
 
-    //this->menu.resize(rest.menu.size()); //Maybe not necessary
+
     for(int i=0;i<rest.menu.size();i++){// Copy Dishes
-        Dish d(rest.menu[i].getId(),rest.menu[i].getName(),rest.menu[i].getPrice(),rest.menu[i].getType());
+        Dish d(rest.menu[i]);
         menu.push_back(d);
     }
 
-    this->actionsLog.resize(rest.actionsLog.size()); //Copy actionLog
-    for(int i=0;i<rest.actionsLog.size();i++){
-        this->actionsLog.push_back(rest.actionsLog[i]->clone());
-    }
-//clone the BaseAction and will return a pointer to the new BaseAction
+
+
 }
 
 //-----------------------Methods----------------------------------------------------

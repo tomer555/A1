@@ -19,7 +19,7 @@
 
     // a copy constructor
 
-    Table::Table (const Table & other){
+    Table::Table (const Table & other):customersList(),orderList(){
       copy(other);
 
         }
@@ -96,7 +96,7 @@ Table & Table:: operator=(const Table& other)  {
         for(int i=0;i<other.customersList.size();i++){
             this->customersList.push_back(other.customersList[i]->clone());
         }
-        for (int j = 0; j < customersList.size(); ++j) {
+        for (int j = 0; j < orderList.size(); ++j) {
             OrderPair p(other.orderList[j].first,other.orderList[j].second);
             orderList.push_back(p);
 
@@ -114,8 +114,7 @@ Table & Table:: operator=(const Table& other)  {
         }
 
         void Table::closeTable(){
-           orderList.clear();
-           customersList.clear();
+           clean();
            open=false;
         }
 
@@ -145,7 +144,7 @@ Table & Table:: operator=(const Table& other)  {
 
         void Table::addCustomer(Customer* customer){
 
-            customersList.push_back(customer);
+            customersList.push_back(customer->clone());
         }
 
 
@@ -153,6 +152,7 @@ Table & Table:: operator=(const Table& other)  {
 
             for (int i = 0; i < customersList.size(); ++i) {
                 if (customersList[i]->getId()==id){
+                        delete customersList[i];
                         customersList.erase(customersList.begin()+i);
                 }
              }
