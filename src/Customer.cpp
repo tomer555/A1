@@ -109,7 +109,7 @@ VegetarianCustomer* VegetarianCustomer:: clone() const{
 
 std::string VegetarianCustomer::toString() const {
     std::stringstream ss;
-    ss <<this->getName()<<",veg ";
+    ss <<this->getName()<<",veg";
     return ss.str();
 }
 
@@ -147,7 +147,7 @@ CheapCustomer* CheapCustomer:: clone() const{
 
 std::string CheapCustomer::toString() const {
     std::stringstream ss;
-    ss <<this->getName()<<",chp ";
+    ss <<this->getName()<<",chp";
     return ss.str();
 }
 
@@ -178,7 +178,7 @@ std::vector<int> SpicyCustomer:: order(const std::vector<Dish> &menu){
 
 std::string SpicyCustomer::toString() const {
     std::stringstream ss;
-    ss <<this->getName()<<",spc ";
+    ss <<this->getName()<<",spc";
     return ss.str();
 }
 
@@ -210,11 +210,13 @@ std::vector<int> AlchoholicCustomer:: order(const std::vector<Dish> &menu) {
         int tempMin = lastOrderPrice;
         for (int i = 0; i < menu.size(); i++) {
             if (menu[i].getType() == ALC) {
+                if (!flag && tempMin < menu[i].getPrice()) {
+                        tempMin = menu[i].getPrice();
+                        lastOrderId = menu[i].getId();
+                        alc=true;
+                        flag = true;
+                    }
 
-                if (!flag) {
-                    tempMin = menu[i].getPrice();
-                    flag = true;
-                }
                 if (menu[i].getPrice() > lastOrderPrice && menu[i].getPrice() == tempMin &&
                     menu[i].getId() < lastOrderId) {
                     tempMin = menu[i].getPrice();
@@ -238,68 +240,9 @@ std::vector<int> AlchoholicCustomer:: order(const std::vector<Dish> &menu) {
 
 
 
-
-
-
-
-
-
-
-
-/*
-//ordering according to AlchoholicCustomer
-std::vector<int> AlchoholicCustomer:: order(const std::vector<Dish> &menu) {
-    std::vector<int> output;
-    if (menu.empty())//check if dish menu is empty - if so return empty vector
-        return output;
-    if (!firstOrder) {
-        int alc_index = -1;
-        bool alc = false;
-        for (int i = 0; i < menu.size(); i++) {
-            if (menu[i].getType() == ALC) {
-                if (!alc) {
-                    alc_index = menu[i].getId();
-                    lastOrderPrice = menu[i].getPrice();
-                    alc = true;
-                }
-
-                if (menu[i].getPrice() == lastOrderPrice && menu[i].getId() < lastOrderPrice)
-                    alc_index = menu[i].getId();
-                if (menu[i].getPrice() < lastOrderPrice)
-                    lastOrderPrice = menu[i].getPrice();
-            }
-        }
-        if (alc) {
-            output.push_back(alc_index);
-            lastOrderId = alc_index;
-            firstOrder = true;
-        }
-    } else {
-
-        for (int i = 0; i < menu.size(); i++) {
-            if (menu[i].getType() == ALC && menu[i].getId() != lastOrderId) {
-                if (menu[i].getPrice() == lastOrderPrice && menu[i].getId() < lastOrderId) {
-                    lastOrderId = menu[i].getId();
-                    output.push_back(lastOrderId);
-                    return output;
-                }
-                if (menu[i].getPrice() > lastOrderPrice) {
-                    lastOrderId = menu[i].getId();
-                    lastOrderPrice = menu[i].getPrice();
-                    output.push_back(lastOrderId);
-                    return output;
-                }
-            }
-        }
-        return output;
-    }
-    return output;
-}
- */
-
 std::string AlchoholicCustomer::toString() const {
     std::stringstream ss;
-    ss <<this->getName()<<",alc ";
+    ss <<this->getName()<<",alc";
     return ss.str();
 }
 //-------------------------------------------------------------------------------------------------------------------------------

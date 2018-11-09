@@ -89,10 +89,9 @@ OpenTable ::OpenTable(OpenTable &&other):BaseAction(),tableId(other.tableId),cus
 void OpenTable::setArgs (int id, std::vector<Customer *> &customersList){
     std:: stringstream s1;
     std:: string  output;
-    s1 <<id<<" ";
-
+    s1 <<id;
     for(int i =0 ; i<customers.size();i++){
-        output.append(customers[i]->toString());
+        output.append(" "+customers[i]->toString());
     }
     setActionArgs(s1.str()+output);
 }
