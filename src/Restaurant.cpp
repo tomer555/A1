@@ -299,7 +299,10 @@ void Restaurant :: start() {
 
             case CLOSE: {
                 int tableId = atoi(words[1].c_str());
-                actionsLog.push_back(new Close(tableId));
+                Close *close_temp=new Close(tableId);
+                (*close_temp).act(*this);
+                actionsLog.push_back(close_temp);
+
                 break;
             }
 
@@ -329,13 +332,13 @@ void Restaurant :: start() {
             }
                 break;
             case BACKUP: {
-                BackupRestaurant *backup=new BackupRestaurant();
-                backup->act(*this);
-                actionsLog.push_back(backup);
+                BackupRestaurant *temp_backup=new BackupRestaurant();
+                temp_backup->act(*this);
+                actionsLog.push_back(temp_backup);
                 break;
             }
             case RESTORE: {
-                RestoreResturant * restore = new RestoreResturant();
+                RestoreRestaurant * restore = new RestoreRestaurant();
                 restore->act(*this);
                 actionsLog.push_back(restore);
                 break;
