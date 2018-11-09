@@ -30,6 +30,7 @@ std::string BaseAction::  getErrorMsg() const{
 }
 
 void BaseAction:: error(std::string errorMsg){
+    std::cout <<errorMsg;
     this->status=ERROR;
     this->errorMsg=std::move(errorMsg);
 }
@@ -83,9 +84,7 @@ void OpenTable ::act(Restaurant &restaurant){
                 this->complete(); //without any exceptions change to complete
 
         } else{
-            std::string output="Error: Table does not exist or is already open";
-            std::cout <<output;
-            this->error(output);
+            this->error( "Error: Table does not exist or is already open");
         }
 }
 
@@ -201,7 +200,6 @@ void Close ::act(Restaurant &restaurant){
     if(validTable(temp)&& (*temp).isOpen() ) { //valid check and open check
         std::cout<<"Table "<<tableId<<" was closed. Bill "<<(*temp).getBill()<<"NIS"<<"\n";
         (*temp).closeTable();
-        (*temp).openTable();
         this->complete();
     }
     else
