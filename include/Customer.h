@@ -65,7 +65,8 @@ public:
     std::vector<int> order(const std::vector<Dish> &menu);
     std::string toString() const;
 private:
-    bool firstOrder;
+	bool firstorder;
+	bool flag;
     int lastOrderPrice;
     int lastOrderId;
 

@@ -362,6 +362,16 @@ void Restaurant :: start() {
         }
 
         }
+        //free all tables memory before shutdown
+        for(int i=0;i<tables.size();i++){
+            delete tables[i];
+        }
+        tables.clear();
+        //free all actionlog memory before shutdown
+        for(int i=0;i<actionsLog.size();i++){
+        delete actionsLog[i];
+        }
+        actionsLog.clear();
     }
 
 

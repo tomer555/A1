@@ -36,8 +36,10 @@ bool Customer::orderCheapest(std::vector<int>&output,const std::vector<Dish> &me
             }
             if (menu[i].getPrice() == low_price && menu[i].getId() < type_index)
                 type_index = menu[i].getId();
-            if (menu[i].getPrice() < low_price)
+            if (menu[i].getPrice() < low_price) {
                 low_price = menu[i].getPrice();
+                type_index = menu[i].getId();
+            }
         }
     }
     if(type_flag) {
@@ -80,6 +82,8 @@ std::vector<int> VegetarianCustomer:: order(const std::vector<Dish> &menu){
     std::vector<int> output;
     if(menu.empty())//check if dish menu is empty - if so return empty vector
         return output;
+
+
     bool veg= false;
     int low_id=-1;
     for(int i=0;i<menu.size();i++) {
@@ -92,7 +96,7 @@ std::vector<int> VegetarianCustomer:: order(const std::vector<Dish> &menu){
                 low_id = menu[i].getId();
         }
     }
-    if(orderExpensive(output,menu,BVG) && veg) //will add to output most expensive BVG is exists
+    if(veg && orderExpensive(output,menu,BVG)) //will add to output most expensive BVG is exists
          output.push_back(low_id); // will add the lowest id veg Dish
     return output;
 }
@@ -182,7 +186,7 @@ std::string SpicyCustomer::toString() const {
 //--------------------------------AlchoholicCustomer-----------------------------------------------------------------------------------------------------
 
 //AlchoholicCustomer Constructor
-AlchoholicCustomer ::AlchoholicCustomer(std::string name, int id):Customer(std::move(name),id),firstOrder(false),lastOrderPrice(0),lastOrderId(-1){}
+AlchoholicCustomer ::AlchoholicCustomer(std::string name, int id):Customer(std::move(name),id),lastOrderPrice(0),lastOrderId(-1),firstorder(false),flag(false){}
 
 
 //clone AlchoholicCustomer object
@@ -190,7 +194,59 @@ AlchoholicCustomer* AlchoholicCustomer:: clone() const{
     return new AlchoholicCustomer(*this);
 }
 
+std::vector<int> AlchoholicCustomer:: order(const std::vector<Dish> &menu) {
+    std::vector<int> output;
+    if (menu.empty())
+        return output;
+    if (!firstorder && orderCheapest(output, menu, ALC)) {
+        lastOrderId = output[0];
+        for (int j = 0; j < menu.size(); j++) {
+            if (lastOrderId == menu[j].getId())
+                lastOrderPrice = menu[j].getPrice();
+        }
+        firstorder=true;
+    } else {
+        bool alc= false;
+        int tempMin = lastOrderPrice;
+        for (int i = 0; i < menu.size(); i++) {
+            if (menu[i].getType() == ALC) {
 
+                if (!flag) {
+                    tempMin = menu[i].getPrice();
+                    flag = true;
+                }
+                if (menu[i].getPrice() > lastOrderPrice && menu[i].getPrice() == tempMin &&
+                    menu[i].getId() < lastOrderId) {
+                    tempMin = menu[i].getPrice();
+                    lastOrderId = menu[i].getId();
+                    alc=true;
+                }
+                if (menu[i].getPrice() > lastOrderPrice && menu[i].getPrice() < tempMin) {
+                    tempMin = menu[i].getPrice();
+                    lastOrderId = menu[i].getId();
+                    alc=true;
+                }
+            }
+        }
+        if (alc) {
+            lastOrderPrice = tempMin;
+            output.push_back(lastOrderId);
+        }
+    }
+    return output;
+}
+
+
+
+
+
+
+
+
+
+
+
+/*
 //ordering according to AlchoholicCustomer
 std::vector<int> AlchoholicCustomer:: order(const std::vector<Dish> &menu) {
     std::vector<int> output;
@@ -239,6 +295,7 @@ std::vector<int> AlchoholicCustomer:: order(const std::vector<Dish> &menu) {
     }
     return output;
 }
+ */
 
 std::string AlchoholicCustomer::toString() const {
     std::stringstream ss;
