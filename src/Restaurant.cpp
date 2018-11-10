@@ -1,6 +1,8 @@
 
 #include "../include/Restaurant.h"
 #include <regex>
+#include <iostream>
+#include <fstream>
 //-------------------------Constructors-------------------------------
 
 
@@ -14,10 +16,19 @@ Restaurant::Restaurant():open(true),tables(),actionsLog(),menu(){
 //constructor
 Restaurant::Restaurant(const std::string &configFilePath):open(true),actionsLog() {
     index=new int(0);
+    std::vector<std::string> vec;
+    std::string line;
+    std::ifstream myfile (configFilePath);
+    if (myfile.is_open())
+    {
+        while ( getline (myfile,line) )
+        {
+            vec.push_back(line);
+        }
+        myfile.close();
+    }
     std::vector<std::string> initialze;
-    std::vector<std::string> vec = splitString(configFilePath, "[\\r\\n]+");
     for(int i=0;i<vec.size();i++){
-
         if(vec[i]!="\n" && vec[i].at(0) !=' ' && vec[i].find('#') == std::string::npos){
             std::vector<std::string> split=splitString(vec[i], "[,]+");
             for(int j=0;j<split.size();j++){
@@ -103,7 +114,9 @@ void Restaurant::clear()  {
     actionsLog.clear();
 
 
-    menu.clear(); // clean Dishes
+    //menu.clear(); // clean Dishes
+
+    delete index;
 
 }
 
@@ -254,13 +267,13 @@ Command Restaurant ::convertCommand(const std::string& str)const {
 // Main function of Restaurant: Open the restaurant and execute commands.
 void Restaurant :: start() {
     std::cout << "Restaurant is now open!";
-    std::string userInput="start";
+    std::string userInput = "start";
 
 
     while (userInput != "closeall") {
         getline(std::cin, userInput);
-        std::vector<std::string> words= splitString(userInput,"[, \\s]+");
-        Command command=convertCommand(words[0]);
+        std::vector<std::string> words = splitString(userInput, "[, \\s]+");
+        Command command = convertCommand(words[0]);
 
         switch (command) {
 
@@ -294,7 +307,7 @@ void Restaurant :: start() {
 
             case ORDER : {
                 int tableId = atoi(words[1].c_str());
-                Order *temp=new Order(tableId);
+                Order *temp = new Order(tableId);
                 (*temp).act(*this);
                 actionsLog.push_back(temp);
                 break;
@@ -303,7 +316,7 @@ void Restaurant :: start() {
 
             case CLOSE: {
                 int tableId = atoi(words[1].c_str());
-                Close *close_temp=new Close(tableId);
+                Close *close_temp = new Close(tableId);
                 (*close_temp).act(*this);
                 actionsLog.push_back(close_temp);
 
@@ -314,15 +327,15 @@ void Restaurant :: start() {
                 int srcTableId = atoi(words[1].c_str());
                 int dstTableId = atoi(words[2].c_str());
                 int customerId = atoi(words[3].c_str());
-                MoveCustomer *move=new MoveCustomer(srcTableId,dstTableId,customerId);
+                MoveCustomer *move = new MoveCustomer(srcTableId, dstTableId, customerId);
                 move->act(*this);
                 actionsLog.push_back(move);
                 break;
             }
 
-            case STATUS:{
-                int tableId=atoi(words[1].c_str());
-                PrintTableStatus *status=new PrintTableStatus(tableId);
+            case STATUS: {
+                int tableId = atoi(words[1].c_str());
+                PrintTableStatus *status = new PrintTableStatus(tableId);
                 status->act(*this);
                 actionsLog.push_back(status);
                 break;
@@ -336,43 +349,33 @@ void Restaurant :: start() {
             }
                 break;
             case BACKUP: {
-                BackupRestaurant *temp_backup=new BackupRestaurant();
+                BackupRestaurant *temp_backup = new BackupRestaurant();
                 temp_backup->act(*this);
                 actionsLog.push_back(temp_backup);
                 break;
             }
             case RESTORE: {
-                RestoreRestaurant * restore = new RestoreRestaurant();
+                RestoreRestaurant *restore = new RestoreRestaurant();
                 restore->act(*this);
                 actionsLog.push_back(restore);
                 break;
             }
             case MENU: {
-                PrintMenu *menu=new PrintMenu();
+                PrintMenu *menu = new PrintMenu();
                 menu->act(*this);
                 actionsLog.push_back(menu);
                 break;
             }
             case CLOSEALL: {
-                CloseAll *closeAll=new CloseAll();
+                CloseAll *closeAll = new CloseAll();
                 closeAll->act(*this);
                 actionsLog.push_back(closeAll);
                 break;
             }
         }
 
-        }
-        //free all tables memory before shutdown
-        for(int i=0;i<tables.size();i++){
-            delete tables[i];
-        }
-        tables.clear();
-        //free all actionlog memory before shutdown
-        for(int i=0;i<actionsLog.size();i++){
-        delete actionsLog[i];
-        }
-        actionsLog.clear();
     }
+}
 
 
 
