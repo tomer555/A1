@@ -1,31 +1,23 @@
-//
-// Created by ofirx on 01/11/18.
-//
 
 #include <iostream>
 #include "../include/Table.h"
-
-// #include <shared_ptr>   why is not it working?
-//std::shared_ptr
-
 
 //-------------------------Constructors-------------------------------
 
     // a constructor+member initializer lists
 
-    Table::Table (int t_capacity) : capacity(t_capacity),orderList(),customersList(),open(false){
+    Table::Table (int t_capacity) : capacity(t_capacity),open(false),customersList(),orderList(){
 
         }
 
     // a copy constructor
 
-    Table::Table (const Table & other):customersList(),orderList(){
+    Table::Table (const Table & other):capacity(),open(),customersList(),orderList(){
       copy(other);
-
         }
 
 //Move constructor
-    Table::Table(Table &&other) {
+    Table::Table(Table &&other):capacity(),open(),customersList(),orderList() {
         steal(other);
     }
 
@@ -74,7 +66,7 @@ Table & Table:: operator=(const Table& other)  {
 
     //Cleans all Restaurant fields
     void Table::clean()  {
-        for(int i=0;i<customersList.size();i++){ // Clean customers
+        for(unsigned int i=0;i<customersList.size();i++){ // Clean customers
             delete customersList[i];
             customersList[i]= nullptr;
         }
@@ -93,10 +85,10 @@ Table & Table:: operator=(const Table& other)  {
         this->capacity=other.capacity;
         this->open=other.open;
                                                        // Copy orders
-        for(int i=0;i<other.customersList.size();i++){
+        for(unsigned int i=0;i<other.customersList.size();i++){
             this->customersList.push_back(other.customersList[i]->clone());
         }
-        for (int j = 0; j < other.orderList.size(); ++j) {
+        for (unsigned int j = 0; j < other.orderList.size(); ++j) {
             OrderPair p(other.orderList[j].first,other.orderList[j].second);
             orderList.push_back(p);
 
@@ -133,7 +125,7 @@ Table & Table:: operator=(const Table& other)  {
         int Table::getBill(){
             //is there a need for =0 ?
             int count=0;
-            for (int i = 0; i <orderList.size() ; ++i) {
+            for (unsigned int i = 0; i <orderList.size() ; ++i) {
                count=count+orderList.at(i).second.getPrice();
             }
             return count;
@@ -150,7 +142,7 @@ Table & Table:: operator=(const Table& other)  {
 
         void Table:: removeCustomer(int id){
 
-            for (int i = 0; i < customersList.size(); ++i) {
+            for (unsigned int i = 0; i < customersList.size(); ++i) {
                 if (customersList[i]->getId()==id){
                         delete customersList[i];
                         customersList.erase(customersList.begin()+i);
@@ -160,15 +152,16 @@ Table & Table:: operator=(const Table& other)  {
 
         Customer*  Table::getCustomer(int id) {
 
-            for (int i = 0; i < customersList.size(); i++) {
+            for (unsigned int i = 0; i < customersList.size(); i++) {
                 if (customersList[i]->getId() == id)
                     return customersList[i];
 
             }
+            return nullptr;
         }
         bool Table::isExisted(int id) {
 
-            for (int i = 0; i < customersList.size(); ++i) {
+            for (unsigned int i = 0; i < customersList.size(); ++i) {
                 if (customersList[i]->getId() == id) return true;
     }
         return false;
@@ -190,10 +183,10 @@ Table & Table:: operator=(const Table& other)  {
 
             void Table::order(const std::vector<Dish> &menu) {
                 //when you do table.order() it can call customer.order(menu) for all the customers at the table
-                for (int i = 0; i < customersList.size(); ++i) {
+                for (unsigned int i = 0; i < customersList.size(); ++i) {
                     std::vector<int> customerOrder = customersList[i]->order(menu);
-                    for (int j = 0; j < customerOrder.size(); ++j) {
-                        for (int k = 0; k < menu.size(); ++k) {
+                    for (unsigned int j = 0; j < customerOrder.size(); ++j) {
+                        for (unsigned int k = 0; k < menu.size(); ++k) {
                             if (menu[k].getId() == customerOrder[j]) {
                                 orderList.push_back(makeOrder(customersList[i]->getId(), menu[k]));
                                 std::cout <<customersList[i]->getName()<<" ordered "<<menu[k].getName()<<"\n";

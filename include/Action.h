@@ -26,12 +26,13 @@ public:
     ActionStatus getStatus() const;
     virtual void act(Restaurant& restaurant)=0;
     virtual std::string toString() const=0;
-	std::string getErrorMsg() const; //**********originally was under Protected but it doesn't make sense
+    std::string convertAction(const ActionStatus action)const;
 	std::string getActionArgs() const;
 
 	void setActionArgs(std::string toSet);
 
 protected:
+    std::string getErrorMsg() const;
     bool validTable(Table* table)const;
     void complete();
     void error(std::string errorMsg);
@@ -59,7 +60,7 @@ public:
     void clear();
     void act(Restaurant &restaurant);
 	void setArgs(int id, std::vector<Customer *> &customersList);
-    std::string toString() const;
+    std::string toString() const override;
 
 private:
 	const int tableId;

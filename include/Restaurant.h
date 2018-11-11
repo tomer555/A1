@@ -35,7 +35,7 @@ public:
      Restaurant(Restaurant &&rest) noexcept;
 
     // Move Assignment
-    Restaurant& operator=(Restaurant&& rest) noexcept;
+    Restaurant& operator=(Restaurant&& rest)noexcept;
 
 
     //-----------------------Getters-----------------------------------------
@@ -54,10 +54,9 @@ public:
     Table* getTable(int ind);
     std::vector<Dish>& getMenu();
     std::vector<std::string> splitString(const std::string& stringToSplit, const std::string& regexPattern);
-    std::vector<std::string> splitStringComma(const std::string& stringToSplit);
     DishType convertDish(const std::string& str)const;
     Command convertCommand(const std::string& str)const;
-    std::string convetAction(ActionStatus action)const;
+
     CustomerType convertCustomer(const std::string& str)const;
 
 

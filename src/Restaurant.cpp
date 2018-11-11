@@ -8,14 +8,12 @@
 
 
 //Empty constructor
-Restaurant::Restaurant():open(true),tables(),actionsLog(),menu(){
-    index=new int(0);
-}
+Restaurant::Restaurant():index(new int(0)),open(true),tables(),menu(),actionsLog(){}
 
 
 //constructor
-Restaurant::Restaurant(const std::string &configFilePath):open(true),actionsLog() {
-    index=new int(0);
+Restaurant::Restaurant(const std::string &configFilePath):index(new int(0)),open(true),tables(),menu(),actionsLog() {
+
     std::vector<std::string> vec;
     std::string line;
     std::ifstream myfile (configFilePath);
@@ -28,23 +26,23 @@ Restaurant::Restaurant(const std::string &configFilePath):open(true),actionsLog(
         myfile.close();
     }
     std::vector<std::string> initialze;
-    for(int i=0;i<vec.size();i++){
+    for(unsigned int i=0;i<vec.size();i++){
         if(vec[i]!="\n" && vec[i].at(0) !=' ' && vec[i].find('#') == std::string::npos){
             std::vector<std::string> split=splitString(vec[i], "[,]+");
-            for(int j=0;j<split.size();j++){
+            for(unsigned int j=0;j<split.size();j++){
 
                 initialze.push_back(split[j]);
             }
         }
     }
     if(!initialze.empty()) {
-        int numOfTables = atoi(initialze[0].c_str());
+        unsigned int numOfTables = atoi(initialze[0].c_str());
 
-        for (int i = 1; i < numOfTables + 1; i++) {
+        for (unsigned int i = 1; i < numOfTables + 1; i++) {
             tables.push_back(new Table(atoi(initialze[i].c_str())));
         }
         int dishid=0;
-        for (int j = numOfTables + 1;j< initialze.size(); j=j+3) {
+        for (unsigned int j = numOfTables + 1;j< initialze.size(); j=j+3) {
             Dish d(dishid,initialze[j],atoi(initialze[j+2].c_str()),convertDish(initialze[j+1]));
             menu.push_back(d);
             dishid++;
@@ -55,12 +53,12 @@ Restaurant::Restaurant(const std::string &configFilePath):open(true),actionsLog(
 }
 
 //Copy Constructor
-Restaurant::Restaurant(const Restaurant &rest):tables(),actionsLog(),menu(){
+Restaurant::Restaurant(const Restaurant &rest):index(),open(),tables(),menu(),actionsLog(){
     copy(rest);
 }
 
 //Move constructor
-Restaurant::Restaurant(Restaurant &&rest) noexcept {
+Restaurant::Restaurant(Restaurant &&rest)noexcept :index(),open(),tables(),menu(),actionsLog(){
     steal(rest);
 }
 
@@ -101,13 +99,13 @@ clear();
 //Cleans all Restaurant fields
 void Restaurant::clear()  {
 
-    for(int i=0;i<tables.size();i++){ // Clean Tables
+    for(unsigned int i=0;i<tables.size();i++){ // Clean Tables
         delete tables[i];
         tables[i]= nullptr;
     }
     tables.clear();
 
-    for(int i=0;i<actionsLog.size();i++){ // Clean actionLog
+    for(unsigned int i=0;i<actionsLog.size();i++){ // Clean actionLog
         delete actionsLog[i];
         actionsLog[i]= nullptr;
     }
@@ -129,18 +127,18 @@ void Restaurant::copy(const Restaurant & rest)  {
     index=new int(*(rest.index));
 
     //clone the BaseAction and will return a pointer to the new BaseAction
-    for(int i=0;i<rest.actionsLog.size();i++){//Copy actionLog
+    for(unsigned int i=0;i<rest.actionsLog.size();i++){//Copy actionLog
         this->actionsLog.push_back(rest.actionsLog[i]->clone());
     }
 
 
 
-    for(int i=0;i<rest.tables.size();i++){//restaurant
+    for(unsigned int i=0;i<rest.tables.size();i++){//restaurant
         this->tables.push_back(new Table(*rest.tables[i]));//will activate Table's copy constructor
     }
 
 
-    for(int i=0;i<rest.menu.size();i++){// Copy Dishes
+    for(unsigned int i=0;i<rest.menu.size();i++){// Copy Dishes
         Dish d(rest.menu[i]);
         menu.push_back(d);
     }
@@ -225,21 +223,7 @@ CustomerType Restaurant ::convertCustomer(const std::string& str)const {
     return CHP;
 }
 
-std::string Restaurant :: convetAction(ActionStatus action)const{
-    switch (action){
-        case PENDING:
-            return "Pending";
-        case COMPLETED:
-            return "Completed";
-        case ERROR:
-            return "Error";
-    }
 
-
-
-
-
-}
 Command Restaurant ::convertCommand(const std::string& str)const {
 
     if (str == "open")
@@ -266,7 +250,7 @@ Command Restaurant ::convertCommand(const std::string& str)const {
 }
 // Main function of Restaurant: Open the restaurant and execute commands.
 void Restaurant :: start() {
-    std::cout << "Restaurant is now open!";
+    std::cout << "Restaurant is now open!\n";
     std::string userInput = "start";
 
 
@@ -280,7 +264,7 @@ void Restaurant :: start() {
             case OPEN: {
                 int tableId = atoi(words[1].c_str());
                 std::vector<Customer *> customers_temp;
-                for (int i = 2; i < words.size(); i = i + 2) {
+                for (unsigned int i = 2; i < words.size(); i = i + 2) {
                     Customer *temp = nullptr;
                     switch (convertCustomer(words[i + 1])) {
                         case CHP :
