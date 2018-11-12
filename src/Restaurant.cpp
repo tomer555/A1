@@ -277,7 +277,7 @@ void Restaurant :: start() {
                             temp = new SpicyCustomer(words[i], *index);
                             break;
                         case ALCO :
-                            temp = new AlchoholicCustomer(words[i], *index);
+                            temp = new AlcoholicCustomer(words[i], *index);
                             break;
                     }
                     customers_temp.push_back(temp);

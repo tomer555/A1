@@ -9,16 +9,19 @@ enum DishType{
 
 class Dish{
 public:
-
-
+	//Constructor
     Dish(int d_id, std::string d_name, int d_price, DishType d_type);
+
+	//Destructor
     virtual ~Dish();
+
+    //-----------Methods--------------------
     int getId() const;
     std::string getName() const;
     int getPrice() const;
     DishType getType() const;
     std::string toString() const;
-
+//-----------------------Members-------------------
 private:
 	const int id;
     const std::string name;

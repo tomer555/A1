@@ -7,30 +7,43 @@
 enum CustomerType{
 	VEGT, CHP,SPCY, ALCO,
 };
+//----------------------------Customer------------------------------------------
 class Customer{
 public:
-	virtual Customer* clone() const = 0;
+    //Constructor
+    Customer(std::string c_name, int c_id);
+
+    //Destructor
 	virtual ~Customer();
+
+
+	//-----------------------Methods------------------------------
     bool orderCheapest(std::vector<int>&output,const std::vector<Dish> &menu, DishType type);
     bool orderExpensive(std::vector<int>&output,const std::vector<Dish> &menu, DishType type);
-    Customer(std::string c_name, int c_id);
+
     virtual std::vector<int> order(const std::vector<Dish> &menu)=0;
     virtual std::string toString() const = 0;
     std::string getName() const;
     int getId() const;
-
+    virtual Customer* clone() const = 0;
+//------------------Members-----------------------
 private:
     const std::string name;
     const int id;
 };
 
-
+//-----------------VegetarianCustomer--------------------------
 class VegetarianCustomer : public Customer {
 public:
-	virtual VegetarianCustomer* clone() const;
+	//Constructor
 	VegetarianCustomer(std::string name, int id);
+
+	//------------Methods--------------------------
     std::vector<int> order(const std::vector<Dish> &menu);
     std::string toString() const;
+    virtual VegetarianCustomer* clone() const;
+
+    //--------Members-----------------
 private:
 };
 
@@ -46,24 +59,33 @@ private:
     bool firstOrder;
 };
 
-
+//---------------------SpicyCustomer----------------------------
 class SpicyCustomer : public Customer {
 public:
-	virtual SpicyCustomer* clone() const;
+	//Constructor
 	SpicyCustomer(std::string name, int id);
+
+	//---------------Methods-----------------------------
+    virtual SpicyCustomer* clone() const;
     std::vector<int> order(const std::vector<Dish> &menu);
     std::string toString() const;
+    //-------------Members--------------------
 private:
     bool firstOrder;
 };
 
-
-class AlchoholicCustomer : public Customer {
+//--------------------AlcoholicCustomer-------------------------------------
+class AlcoholicCustomer : public Customer {
 public:
-	virtual AlchoholicCustomer* clone() const;
-	AlchoholicCustomer(std::string name, int id);
+	//Constructor
+	AlcoholicCustomer(std::string name, int id);
+
+	//----------------Methods------------------------------
     std::vector<int> order(const std::vector<Dish> &menu);
     std::string toString() const;
+    virtual AlcoholicCustomer* clone() const;
+
+    //-------------Members-----------------------------------
 private:
 	bool firstorder;
 	bool flag;

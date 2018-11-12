@@ -188,15 +188,15 @@ std::string SpicyCustomer::toString() const {
 //--------------------------------AlchoholicCustomer-----------------------------------------------------------------------------------------------------
 
 //AlchoholicCustomer Constructor
-AlchoholicCustomer ::AlchoholicCustomer(std::string name, int id):Customer(std::move(name),id),firstorder(false),flag(false),lastOrderPrice(0),lastOrderId(-1){}
+AlcoholicCustomer ::AlcoholicCustomer(std::string name, int id):Customer(std::move(name),id),firstorder(false),flag(false),lastOrderPrice(0),lastOrderId(-1){}
 
 
 //clone AlchoholicCustomer object
-AlchoholicCustomer* AlchoholicCustomer:: clone() const{
-    return new AlchoholicCustomer(*this);
+AlcoholicCustomer* AlcoholicCustomer:: clone() const{
+    return new AlcoholicCustomer(*this);
 }
 
-std::vector<int> AlchoholicCustomer:: order(const std::vector<Dish> &menu) {
+std::vector<int> AlcoholicCustomer:: order(const std::vector<Dish> &menu) {
     std::vector<int> output;
     if (menu.empty())
         return output;
@@ -242,7 +242,7 @@ std::vector<int> AlchoholicCustomer:: order(const std::vector<Dish> &menu) {
 
 
 
-std::string AlchoholicCustomer::toString() const {
+std::string AlcoholicCustomer::toString() const {
     std::stringstream ss;
     ss <<this->getName()<<",alc";
     return ss.str();

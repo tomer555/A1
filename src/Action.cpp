@@ -10,6 +10,8 @@
 //Empty Constructor
 BaseAction::BaseAction():errorMsg(std::__cxx11::string()) ,ActionArgs(std::__cxx11::string()),status(PENDING){};
 
+//copy constructor
+BaseAction::BaseAction(const BaseAction &other):errorMsg(other.errorMsg),ActionArgs(other.getActionArgs()),status(other.status){}
 
 //Empty Destructor
 BaseAction::~BaseAction() {};
@@ -69,8 +71,6 @@ std::string BaseAction :: convertAction(const ActionStatus action)const{
     return std::__cxx11::string();
 }
 
-//copy constructor
-BaseAction::BaseAction(const BaseAction &rest):errorMsg(rest.errorMsg),ActionArgs(rest.getActionArgs()),status(rest.status){}
 //-----------------------------OpenTable------------------------------
 
 //Constructor OpenTable
@@ -375,7 +375,7 @@ void PrintTableStatus ::act(Restaurant &restaurant) {
             s2 << orders[i].second.toString() << " " << orders[i].first;
             std::cout << s2.str() << "\n";
         }
-        std::cout << "Current bill: " << (*temp).getBill()<<"NIS\n";
+        std::cout << "Current Bill: " << (*temp).getBill()<<"NIS\n";
     } else {
         s1 << "Table " << tableId << " status: close\n";
         std::cout << s1.str();
