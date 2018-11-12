@@ -11,28 +11,25 @@ typedef std::pair<int, Dish> OrderPair;
 
 class Table{
 public:
-    //-------------------Rule of 5----------------------------------------
     //Constructor
     Table(int t_capacity);
+
+    //-------------------Rule of 5----------------------------------------
+    //Destructor
+    virtual ~Table();
 
     //Copy Constructor
     Table(const Table &other);
 
-    //Destructor
-    virtual ~Table();
+    //Copy Assignment
+    Table & operator=(const Table& other);
 
     //Move Constructor
     Table(Table &&other);
 
-
-    //Copy Assignment
-    Table & operator=(const Table& other);
-
     //Move Assignment
     Table & operator=(Table&& other);
-    void copy(const Table & rest);
-    void clean();
-    void steal(Table &other);
+
 //---------------------------Getters/Setters-------------------------------------------------
     int getCapacity() const;
     std::vector<Customer*>& getCustomers();
@@ -40,6 +37,9 @@ public:
     void setOrderList(std::vector<OrderPair> toset);
 
     //------------------------------Methods--------------------------------------------------
+    void copy(const Table & rest);
+    void clean();
+    void steal(Table &other);
     OrderPair makeOrder(int customerId,Dish dish)const;
     void removeCustomer(int id);
     Customer* getCustomer(int id);
