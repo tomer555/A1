@@ -4,11 +4,17 @@
 #include <vector>
 #include <string>
 #include "Dish.h"
+bool compAlc (std::pair<int,int> i, std::pair<int,int> j);
+
+
 enum CustomerType{
 	VEGT, CHP,SPCY, ALCO,
 };
+
+
 //----------------------------Customer------------------------------------------
 class Customer{
+
 public:
     //Constructor
     Customer(std::string c_name, int c_id);
@@ -87,11 +93,7 @@ public:
 
     //-------------Members-----------------------------------
 private:
-	bool firstorder;
-	bool flag;
-    int lastOrderPrice;
-    int lastOrderId;
-
+	unsigned int currentIndex;
 };
 
 

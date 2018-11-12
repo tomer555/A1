@@ -45,6 +45,7 @@ Restaurant::Restaurant(const std::string &configFilePath):index(new int(0)),open
         for (unsigned int j = numOfTables + 1;j< initialze.size(); j=j+3) {
             Dish d(dishid,initialze[j],atoi(initialze[j+2].c_str()),convertDish(initialze[j+1]));
             menu.push_back(d);
+
             dishid++;
         }
     }
@@ -149,7 +150,7 @@ void Restaurant::copy(const Restaurant & rest)  {
 
 //-----------------------Methods----------------------------------------------------
 
-
+//Splits a string on a given regex expression
 std::vector<std::string> Restaurant:: splitString(const std::string& stringToSplit, const std::string& regexPattern)
 {
     std::vector<std::string> result;
@@ -360,6 +361,7 @@ void Restaurant :: start() {
 
     }
 }
+
 
 
 

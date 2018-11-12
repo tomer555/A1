@@ -91,6 +91,7 @@ void OpenTable:: clear(){
 //copy constructor
 OpenTable ::OpenTable(const OpenTable &other):BaseAction(other), tableId(other.tableId),customers(other.cloneCustomers()){}
 
+
 //move constructor
 OpenTable ::OpenTable(OpenTable &&other):BaseAction(),tableId(other.tableId),customers(other.customers){
 }
@@ -152,6 +153,10 @@ std::string OpenTable :: toString() const {
 OpenTable *OpenTable::clone() const {
     return new OpenTable(*this);// activates copy constructor
 }
+
+
+
+
 
 
 

@@ -1,5 +1,9 @@
 #include <sstream>
+#include <algorithm>
 #include "../include/Customer.h"
+#include "../include/Table.h"
+#include "../include/Restaurant.h"
+
 
 
 //--------------------------------Customer-------------------------------------------------
@@ -96,8 +100,13 @@ std::vector<int> VegetarianCustomer:: order(const std::vector<Dish> &menu){
                 low_id = menu[i].getId();
         }
     }
-    if(veg && orderExpensive(output,menu,BVG)) //will add to output most expensive BVG is exists
-         output.push_back(low_id); // will add the lowest id veg Dish
+    if(veg) {//will add to output most expensive BVG is exists
+        output.push_back(low_id);// will add the lowest id veg Dish
+    }
+    if(veg && !orderExpensive(output,menu,BVG))
+        output.clear();
+
+
     return output;
 }
 
@@ -116,7 +125,8 @@ std::string VegetarianCustomer::toString() const {
 //--------------------------------CheapCustomer-------------------------------------------------
 CheapCustomer::CheapCustomer(std::string name, int id): Customer(std::move(name),id) , firstOrder(false){}
 
-std::vector<int> CheapCustomer:: order(const std::vector<Dish> &menu){
+std::vector<int> CheapCustomer:: order(const std::vector<Dish> &menu) {
+
     std::vector<int> output;
     if(!firstOrder) { //CheapCustomer can only order one time
         if (menu.empty())//check if dish menu is empty - if so return empty vector
@@ -188,7 +198,7 @@ std::string SpicyCustomer::toString() const {
 //--------------------------------AlchoholicCustomer-----------------------------------------------------------------------------------------------------
 
 //AlchoholicCustomer Constructor
-AlcoholicCustomer ::AlcoholicCustomer(std::string name, int id):Customer(std::move(name),id),firstorder(false),flag(false),lastOrderPrice(0),lastOrderId(-1){}
+AlcoholicCustomer ::AlcoholicCustomer(std::string name, int id):Customer(std::move(name),id),currentIndex(0){}
 
 
 //clone AlchoholicCustomer object
@@ -197,48 +207,37 @@ AlcoholicCustomer* AlcoholicCustomer:: clone() const{
 }
 
 std::vector<int> AlcoholicCustomer:: order(const std::vector<Dish> &menu) {
+    std::vector<std::pair<int,int>> pairs; // first is id, second is price
+    std::vector<std::pair<int,int>> ordered_pairs;
     std::vector<int> output;
-    if (menu.empty())
-        return output;
-    if (!firstorder && orderCheapest(output, menu, ALC)) {
-        lastOrderId = output[0];
-        for (unsigned int j = 0; j < menu.size(); j++) {
-            if (lastOrderId == menu[j].getId())
-                lastOrderPrice = menu[j].getPrice();
+    int lastPrice=-1;
+    for(unsigned int i=0; i<menu.size();i++){
+        if(menu[i].getType()==ALC)
+            pairs.emplace_back(menu[i].getId(), menu[i].getPrice());
+    }
+    std::sort(pairs.begin(),pairs.end(),compAlc);
+    for(unsigned int i=0;i<pairs.size();i++){
+        if(pairs[i].second>lastPrice) {
+            ordered_pairs.push_back(pairs[i]);
+            lastPrice=pairs[i].second;
         }
-        firstorder=true;
-    } else {
-        bool alc= false;
-        int tempMin = lastOrderPrice;
-        for (unsigned int i = 0; i < menu.size(); i++) {
-            if (menu[i].getType() == ALC) {
-                if (!flag && tempMin < menu[i].getPrice()) {
-                        tempMin = menu[i].getPrice();
-                        lastOrderId = menu[i].getId();
-                        alc=true;
-                        flag = true;
-                    }
-
-                if (menu[i].getPrice() > lastOrderPrice && menu[i].getPrice() == tempMin &&
-                    menu[i].getId() < lastOrderId) {
-                    tempMin = menu[i].getPrice();
-                    lastOrderId = menu[i].getId();
-                    alc=true;
-                }
-                if (menu[i].getPrice() > lastOrderPrice && menu[i].getPrice() < tempMin) {
-                    tempMin = menu[i].getPrice();
-                    lastOrderId = menu[i].getId();
-                    alc=true;
-                }
-            }
-        }
-        if (alc) {
-            lastOrderPrice = tempMin;
-            output.push_back(lastOrderId);
+    }
+    for(unsigned int i=0;i<ordered_pairs.size();i++){
+        if(currentIndex<ordered_pairs.size()){
+            output.push_back(ordered_pairs[i].first);
+            currentIndex++;
+            break;
         }
     }
     return output;
-}
+
+
+
+
+
+    }
+
+
 
 
 
@@ -249,4 +248,10 @@ std::string AlcoholicCustomer::toString() const {
 }
 //-------------------------------------------------------------------------------------------------------------------------------
 
-
+bool compAlc (std::pair<int,int> i, std::pair<int,int> j){
+    if(i.second==j.second && i.first<j.first)
+        return true;
+    else if(i.second<j.second)
+        return true;
+    return false;
+}
