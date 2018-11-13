@@ -10,7 +10,7 @@
 
 
 //Constructor Memory initialization
-Customer::Customer(std::string c_name, int c_id):name(std::move(c_name)),id(c_id){}
+Customer::Customer(std::string c_name, int c_id):firstOrder(false),name(std::move(c_name)),id(c_id){}
 
 //Destructor
 Customer::~Customer(){}
@@ -25,88 +25,29 @@ int Customer:: getId() const {
     return this->id;
 }
 
-
-
-bool Customer::orderCheapest(std::vector<int>&output,const std::vector<Dish> &menu, DishType type) {
-    int low_price=0;
-    int type_index=-1;
-    bool type_flag= false;
-    for(unsigned int i=0;i<menu.size();i++) {
-        if (menu[i].getType() == type) {
-            if (!type_flag) {
-                type_index = menu[i].getId();
-                low_price = menu[i].getPrice();
-                type_flag = true;
-            }
-            if (menu[i].getPrice() == low_price && menu[i].getId() < type_index)
-                type_index = menu[i].getId();
-            if (menu[i].getPrice() < low_price) {
-                low_price = menu[i].getPrice();
-                type_index = menu[i].getId();
-            }
-        }
-    }
-    if(type_flag) {
-        output.push_back(type_index);
-        return true;
-    }
-    return false;
-}
-
-bool Customer::orderExpensive(std::vector<int>&output,const std::vector<Dish> &menu, DishType type) {
-    int high_price = 0;
-    int type_index = -1;
-    bool type_flag = false;
-    for (unsigned int i = 0; i < menu.size(); i++) {
-        if (menu[i].getType() == type) {
-            if (!type_flag) {
-                type_index = menu[i].getId();
-                type_flag = true;
-            }
-            if (menu[i].getPrice() == high_price && menu[i].getId() < type_index)
-                type_index = menu[i].getId();
-            if (menu[i].getPrice() > high_price) {
-                high_price = menu[i].getPrice();
-                type_index = menu[i].getId();
-            }
-        }
-    }
-    if (type_flag) {
-        output.push_back(type_index);
-        return true;
-    }
-    return false;
-}
-
 //--------------------------------VegetarianCustomer-------------------------------------------------
 
-VegetarianCustomer ::VegetarianCustomer(std::string name, int id) : Customer(std::move(name),id){}
+VegetarianCustomer ::VegetarianCustomer(std::string name, int id) : Customer(std::move(name),id),vegDishId(-1),bvgDishId(-1),okToOrder(
+        false){}
 
-std::vector<int> VegetarianCustomer:: order(const std::vector<Dish> &menu){
+std::vector<int> VegetarianCustomer:: order(const std::vector<Dish> &menu) {
     std::vector<int> output;
-    if(menu.empty())//check if dish menu is empty - if so return empty vector
-        return output;
-
-
-    bool veg= false;
-    int low_id=-1;
-    for(unsigned int i=0;i<menu.size();i++) {
-        if (menu[i].getType() == VEG) {
-            if (!veg) {
-                low_id = menu[i].getId();
-                veg = true;
-            }
-            if (menu[i].getId() < low_id) //check if current VEG ID number is lower than the low_id
-                low_id = menu[i].getId();
+    std::vector<std::pair<int, int>> veg_pairs; // first is id, second is price
+    std::vector<std::pair<int, int>> bvg_pairs;
+    if (!firstOrder && !menu.empty()) {
+        veg_pairs = std::move(typeSort(menu, VEG, true));
+        bvg_pairs = std::move(typeSort(menu, BVG, false));
+        firstOrder = true;
+        if (!veg_pairs.empty() && !bvg_pairs.empty()) {
+            okToOrder = true;
+            vegDishId = veg_pairs[0].first;
+            bvgDishId = bvg_pairs[bvg_pairs.size() - 1].first;
         }
     }
-    if(veg) {//will add to output most expensive BVG is exists
-        output.push_back(low_id);// will add the lowest id veg Dish
+    if (okToOrder) {
+        output.push_back(vegDishId);
+        output.push_back(bvgDishId);
     }
-    if(veg && !orderExpensive(output,menu,BVG))
-        output.clear();
-
-
     return output;
 }
 
@@ -123,27 +64,16 @@ std::string VegetarianCustomer::toString() const {
 }
 
 //--------------------------------CheapCustomer-------------------------------------------------
-CheapCustomer::CheapCustomer(std::string name, int id): Customer(std::move(name),id) , firstOrder(false){}
+CheapCustomer::CheapCustomer(std::string name, int id): Customer(std::move(name),id){}
 
 std::vector<int> CheapCustomer:: order(const std::vector<Dish> &menu) {
-
     std::vector<int> output;
-    if(!firstOrder) { //CheapCustomer can only order one time
-        if (menu.empty())//check if dish menu is empty - if so return empty vector
-            return output;
-        int low_price = menu[0].getPrice();
-        int low_price_id = menu[0].getId();
-        for (unsigned int j = 1; j < menu.size(); j++) {
-            int dishPrice = menu[j].getPrice();
-            int dishID = menu[j].getId();
-            if (dishPrice == low_price && dishID < low_price_id)//if prices equal - check by lower id
-                low_price_id = dishID;
-            else if (dishPrice < low_price) { //checks if the current Dish price is lower than low_price
-                low_price = dishPrice;
-                low_price_id=dishID;
-            }
-        }
-        output.push_back(low_price_id);
+    if(!firstOrder &&!menu.empty()) { //CheapCustomer can only order one time
+        std::vector<std::pair<int,int>> pairs; // first is id, second is price
+        for(unsigned int i=0; i<menu.size();i++)
+            pairs.emplace_back(menu[i].getId(), menu[i].getPrice());
+        std::sort(pairs.begin(),pairs.end(),compCheapToExp);
+        output.push_back(pairs[0].first);
         firstOrder=true;
     }
     return output;
@@ -166,7 +96,7 @@ std::string CheapCustomer::toString() const {
 
 //--------------------------------SpicyCustomer-------------------------------------------------
 //Constructor
-SpicyCustomer ::SpicyCustomer(std::string name, int id): Customer(std::move(name),id),firstOrder(false) {}
+SpicyCustomer ::SpicyCustomer(std::string name, int id): Customer(std::move(name),id),bvgDishId(-1) {}
 
 //clone the SpicyCustomer object
 SpicyCustomer* SpicyCustomer:: clone() const{
@@ -176,14 +106,19 @@ SpicyCustomer* SpicyCustomer:: clone() const{
 
 std::vector<int> SpicyCustomer:: order(const std::vector<Dish> &menu){
     std::vector<int> output;
-    if (menu.empty())//check if dish menu is empty - if so return empty vector
-        return output;
-    if(!firstOrder) { // SpicyCustomer first order
-        orderExpensive(output, menu, SPC);//will order the most expensive spicy dish if exist
-        firstOrder = true;
+    if(!firstOrder) {// SpicyCustomer first order
+        std::vector<std::pair<int, int>> spc_pairs = std::move(typeSort(menu, SPC, false));
+        if (!spc_pairs.empty()) {
+            output.push_back(spc_pairs[spc_pairs.size() - 1].first);
+            firstOrder = true;
+        }
+    } else if(bvgDishId==-1){
+        std::vector<std::pair<int, int>> spc_pairs = std::move(typeSort(menu, BVG, false));
+        if(!spc_pairs.empty())
+            bvgDishId = spc_pairs[0].first;
     }
-    else
-        orderCheapest(output,menu,BVG);//will order the cheapest non Alc  if exist
+    if(bvgDishId!=-1)
+        output.push_back(bvgDishId);
 
     return output;
 }
@@ -198,7 +133,7 @@ std::string SpicyCustomer::toString() const {
 //--------------------------------AlchoholicCustomer-----------------------------------------------------------------------------------------------------
 
 //AlchoholicCustomer Constructor
-AlcoholicCustomer ::AlcoholicCustomer(std::string name, int id):Customer(std::move(name),id),currentIndex(0){}
+AlcoholicCustomer ::AlcoholicCustomer(std::string name, int id):Customer(std::move(name),id),currentIndex(0),alc_menu(){}
 
 
 //clone AlchoholicCustomer object
@@ -207,35 +142,17 @@ AlcoholicCustomer* AlcoholicCustomer:: clone() const{
 }
 
 std::vector<int> AlcoholicCustomer:: order(const std::vector<Dish> &menu) {
-    std::vector<std::pair<int,int>> pairs; // first is id, second is price
-    std::vector<std::pair<int,int>> ordered_pairs;
     std::vector<int> output;
-    int lastPrice=-1;
-    for(unsigned int i=0; i<menu.size();i++){
-        if(menu[i].getType()==ALC)
-            pairs.emplace_back(menu[i].getId(), menu[i].getPrice());
+    if(!firstOrder&&!menu.empty()) { // alc menu is not created yet
+        alc_menu=std::move(typeSort(menu,ALC, false));
     }
-    std::sort(pairs.begin(),pairs.end(),compAlc);
-    for(unsigned int i=0;i<pairs.size();i++){
-        if(pairs[i].second>lastPrice) {
-            ordered_pairs.push_back(pairs[i]);
-            lastPrice=pairs[i].second;
-        }
-    }
-    for(unsigned int i=0;i<ordered_pairs.size();i++){
-        if(currentIndex<ordered_pairs.size()){
-            output.push_back(ordered_pairs[i].first);
-            currentIndex++;
-            break;
-        }
+    if(currentIndex<alc_menu.size()) { //check is we didn't reach the most expensive dish
+        output.push_back(alc_menu[currentIndex].first);
+        currentIndex++;
+        firstOrder=true;
     }
     return output;
-
-
-
-
-
-    }
+}
 
 
 
@@ -246,12 +163,40 @@ std::string AlcoholicCustomer::toString() const {
     ss <<this->getName()<<",alc";
     return ss.str();
 }
+
+std::vector<std::pair<int,int>> typeSort(const std::vector<Dish> &menu, DishType type,bool idOnly) {
+    std::vector<std::pair<int,int>> output;
+    std::vector<std::pair<int,int>> pairs; // first is id, second is price
+    int lastPrice=-1;
+    for(unsigned int i=0; i<menu.size();i++){
+        if(menu[i].getType()==type)
+            pairs.emplace_back(menu[i].getId(), menu[i].getPrice());
+    }
+    if(idOnly) {
+        std::sort(pairs.begin(), pairs.end(), compId);
+        return pairs;
+    }
+    else {
+        std::sort(pairs.begin(), pairs.end(), compCheapToExp);
+        for (unsigned int i = 0; i < pairs.size(); i++) {
+            if (pairs[i].second > lastPrice) {
+                output.push_back(pairs[i]);
+                lastPrice = pairs[i].second;
+            }
+        }
+        return output;
+    }
+}
 //-------------------------------------------------------------------------------------------------------------------------------
 
-bool compAlc (std::pair<int,int> i, std::pair<int,int> j){
+bool compCheapToExp (std::pair<int,int> i, std::pair<int,int> j){
     if(i.second==j.second && i.first<j.first)
         return true;
     else if(i.second<j.second)
         return true;
     return false;
+}
+
+bool compId (std::pair<int,int> i, std::pair<int,int> j){
+    return (i.first<j.first);
 }

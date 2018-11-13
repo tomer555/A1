@@ -4,13 +4,13 @@
 #include <vector>
 #include <string>
 #include "Dish.h"
-bool compAlc (std::pair<int,int> i, std::pair<int,int> j);
-
+bool compCheapToExp (std::pair<int,int> i, std::pair<int,int> j);
+bool compId (std::pair<int,int> i, std::pair<int,int> j);
 
 enum CustomerType{
 	VEGT, CHP,SPCY, ALCO,
 };
-
+std::vector<std::pair<int,int>> typeSort(const std::vector<Dish> &menu, DishType type,bool idOnly);
 
 //----------------------------Customer------------------------------------------
 class Customer{
@@ -24,18 +24,20 @@ public:
 
 
 	//-----------------------Methods------------------------------
-    bool orderCheapest(std::vector<int>&output,const std::vector<Dish> &menu, DishType type);
-    bool orderExpensive(std::vector<int>&output,const std::vector<Dish> &menu, DishType type);
 
     virtual std::vector<int> order(const std::vector<Dish> &menu)=0;
     virtual std::string toString() const = 0;
     std::string getName() const;
     int getId() const;
     virtual Customer* clone() const = 0;
+
+protected:
+    bool firstOrder;
 //------------------Members-----------------------
 private:
     const std::string name;
     const int id;
+
 };
 
 //-----------------VegetarianCustomer--------------------------
@@ -51,6 +53,9 @@ public:
 
     //--------Members-----------------
 private:
+    int vegDishId;
+    int bvgDishId;
+    bool okToOrder;
 };
 
 
@@ -62,7 +67,7 @@ public:
     std::vector<int> order(const std::vector<Dish> &menu);
     std::string toString() const;
 private:
-    bool firstOrder;
+
 };
 
 //---------------------SpicyCustomer----------------------------
@@ -77,7 +82,7 @@ public:
     std::string toString() const;
     //-------------Members--------------------
 private:
-    bool firstOrder;
+    int bvgDishId;
 };
 
 //--------------------AlcoholicCustomer-------------------------------------
@@ -89,11 +94,15 @@ public:
 	//----------------Methods------------------------------
     std::vector<int> order(const std::vector<Dish> &menu);
     std::string toString() const;
+
+
     virtual AlcoholicCustomer* clone() const;
 
     //-------------Members-----------------------------------
 private:
 	unsigned int currentIndex;
+
+	std::vector<std::pair<int,int>> alc_menu;
 };
 
 
