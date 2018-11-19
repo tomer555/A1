@@ -41,18 +41,14 @@ Table & Table:: operator=(const Table& other)  {
         return *this;
 }
 
-    //std move?
-//diffrence between copy to move?
+
 //steal function
     void Table::steal(Table &other) {
         open=other.open;
         capacity=other.capacity;
- //the same order for * and regular?
-
         customersList = std::move(other.customersList);
         orderList = std::move(other.orderList);
-//im not sure about that. i have to delete the other data on the stack....
-//        other.open= false;
+
     }
 
 
@@ -80,7 +76,7 @@ Table & Table:: operator=(const Table& other)  {
 
 
 //----------------------------Copy---------------------------------------
-//y the arrow is necessary
+
 
     //Copy 'rest' fields into 'this'
     void Table::copy(const Table & other)  {
@@ -193,7 +189,6 @@ Table & Table:: operator=(const Table& other)  {
                                 orderList.push_back(makeOrder(customersList[i]->getId(), menu[k]));
                                 std::cout <<customersList[i]->getName()<<" ordered "<<menu[k].getName()<<"\n";
                             }
-
                         }
                     }
                 }

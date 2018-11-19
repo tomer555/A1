@@ -7,9 +7,7 @@
 bool compCheapToExp (std::pair<int,int> i, std::pair<int,int> j);
 bool compId (std::pair<int,int> i, std::pair<int,int> j);
 
-enum CustomerType{
-	VEGT, CHP,SPCY, ALCO,
-};
+
 std::vector<std::pair<int,int>> typeSort(const std::vector<Dish> &menu, DishType type,bool idOnly);
 
 //----------------------------Customer------------------------------------------

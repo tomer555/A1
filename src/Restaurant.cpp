@@ -25,25 +25,24 @@ Restaurant::Restaurant(const std::string &configFilePath):index(new int(0)),open
         }
         myfile.close();
     }
-    std::vector<std::string> initialze;
+    std::vector<std::string> initilize;
     for(unsigned int i=0;i<vec.size();i++){
         if(vec[i]!="\n" && vec[i].at(0) !=' ' && vec[i].find('#') == std::string::npos){
             std::vector<std::string> split=splitString(vec[i], "[,]+");
             for(unsigned int j=0;j<split.size();j++){
 
-                initialze.push_back(split[j]);
+                initilize.push_back(split[j]);
             }
         }
     }
-    if(!initialze.empty()) {
-        unsigned int numOfTables = atoi(initialze[0].c_str());
-
+    if(!initilize.empty()) {
+        unsigned int numOfTables = atoi(initilize[0].c_str());
         for (unsigned int i = 1; i < numOfTables + 1; i++) {
-            tables.push_back(new Table(atoi(initialze[i].c_str())));
+            tables.push_back(new Table(atoi(initilize[i].c_str())));
         }
         int dishid=0;
-        for (unsigned int j = numOfTables + 1;j< initialze.size(); j=j+3) {
-            Dish d(dishid,initialze[j],atoi(initialze[j+2].c_str()),convertDish(initialze[j+1]));
+        for (unsigned int j = numOfTables + 1;j< initilize.size(); j=j+3) {
+            Dish d(dishid,initilize[j],atoi(initilize[j+2].c_str()),convertDish(initilize[j+1]));
             menu.push_back(d);
 
             dishid++;
@@ -206,23 +205,9 @@ DishType Restaurant ::convertDish(const std::string& str)const {
         return ALC;
     else if (str == "SPC")
         return SPC;
-
     return SPC;
 }
 
-CustomerType Restaurant ::convertCustomer(const std::string& str)const {
-
-    if (str == "chp")
-        return CHP;
-    else if (str == "veg")
-        return VEGT;
-    else if (str == "alc")
-        return ALCO;
-    else if (str == "spc")
-        return SPCY;
-
-    return CHP;
-}
 
 
 Command Restaurant ::convertCommand(const std::string& str)const {
@@ -267,24 +252,19 @@ void Restaurant :: start() {
                 std::vector<Customer *> customers_temp;
                 for (unsigned int i = 2; i < words.size(); i = i + 2) {
                     Customer *temp = nullptr;
-                    switch (convertCustomer(words[i + 1])) {
-                        case CHP :
-                            temp = new CheapCustomer(words[i], *index);
-                            break;
-                        case VEGT :
-                            temp = new VegetarianCustomer(words[i], *index);
-                            break;
-                        case SPCY :
-                            temp = new SpicyCustomer(words[i], *index);
-                            break;
-                        case ALCO :
-                            temp = new AlcoholicCustomer(words[i], *index);
-                            break;
-                    }
+                    std::string customer=words[i + 1];
+                    if (customer == "chp")
+                        temp = new CheapCustomer(words[i], *index);
+                    else if (customer == "veg")
+                        temp = new VegetarianCustomer(words[i], *index);
+                    else if (customer == "alc")
+                        temp = new AlcoholicCustomer(words[i], *index);
+                    else if (customer == "spc")
+                        temp = new SpicyCustomer(words[i], *index);
                     customers_temp.push_back(temp);
                     (*index)++;
                 }
-                OpenTable *temp_open = new OpenTable(tableId, customers_temp);
+                BaseAction *temp_open = new OpenTable(tableId, customers_temp);
                 actionsLog.push_back(temp_open);
                 (*temp_open).act(*this);
                 break;
@@ -292,7 +272,7 @@ void Restaurant :: start() {
 
             case ORDER : {
                 int tableId = atoi(words[1].c_str());
-                Order *temp = new Order(tableId);
+                BaseAction *temp = new Order(tableId);
                 (*temp).act(*this);
                 actionsLog.push_back(temp);
                 break;
@@ -301,7 +281,7 @@ void Restaurant :: start() {
 
             case CLOSE: {
                 int tableId = atoi(words[1].c_str());
-                Close *close_temp = new Close(tableId);
+                BaseAction  *close_temp = new Close(tableId);
                 (*close_temp).act(*this);
                 actionsLog.push_back(close_temp);
 
@@ -312,7 +292,7 @@ void Restaurant :: start() {
                 int srcTableId = atoi(words[1].c_str());
                 int dstTableId = atoi(words[2].c_str());
                 int customerId = atoi(words[3].c_str());
-                MoveCustomer *move = new MoveCustomer(srcTableId, dstTableId, customerId);
+                BaseAction  *move = new MoveCustomer(srcTableId, dstTableId, customerId);
                 move->act(*this);
                 actionsLog.push_back(move);
                 break;
@@ -320,7 +300,7 @@ void Restaurant :: start() {
 
             case STATUS: {
                 int tableId = atoi(words[1].c_str());
-                PrintTableStatus *status = new PrintTableStatus(tableId);
+                BaseAction  *status = new PrintTableStatus(tableId);
                 status->act(*this);
                 actionsLog.push_back(status);
                 break;
@@ -328,31 +308,31 @@ void Restaurant :: start() {
             }
 
             case LOG: {
-                PrintActionsLog *log = new PrintActionsLog();
+                BaseAction  *log = new PrintActionsLog();
                 log->act(*this);
                 actionsLog.push_back(log);
             }
                 break;
             case BACKUP: {
-                BackupRestaurant *temp_backup = new BackupRestaurant();
+                BaseAction  *temp_backup = new BackupRestaurant();
                 temp_backup->act(*this);
                 actionsLog.push_back(temp_backup);
                 break;
             }
             case RESTORE: {
-                RestoreRestaurant *restore = new RestoreRestaurant();
+                BaseAction  *restore = new RestoreRestaurant();
                 restore->act(*this);
                 actionsLog.push_back(restore);
                 break;
             }
             case MENU: {
-                PrintMenu *menu = new PrintMenu();
+                BaseAction  *menu = new PrintMenu();
                 menu->act(*this);
                 actionsLog.push_back(menu);
                 break;
             }
             case CLOSEALL: {
-                CloseAll *closeAll = new CloseAll();
+                BaseAction  *closeAll = new CloseAll();
                 closeAll->act(*this);
                 actionsLog.push_back(closeAll);
                 break;

@@ -57,7 +57,6 @@ public:
     DishType convertDish(const std::string& str)const;
     Command convertCommand(const std::string& str)const;
 
-    CustomerType convertCustomer(const std::string& str)const;
 
 
 

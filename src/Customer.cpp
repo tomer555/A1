@@ -132,11 +132,11 @@ std::string SpicyCustomer::toString() const {
 
 //--------------------------------AlchoholicCustomer-----------------------------------------------------------------------------------------------------
 
-//AlchoholicCustomer Constructor
+//AlcoholicCustomer Constructor
 AlcoholicCustomer ::AlcoholicCustomer(std::string name, int id):Customer(std::move(name),id),currentIndex(0),alc_menu(){}
 
 
-//clone AlchoholicCustomer object
+//clone AlcoholicCustomer object
 AlcoholicCustomer* AlcoholicCustomer:: clone() const{
     return new AlcoholicCustomer(*this);
 }

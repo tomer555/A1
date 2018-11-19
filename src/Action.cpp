@@ -382,7 +382,7 @@ void PrintTableStatus ::act(Restaurant &restaurant) {
         }
         std::cout << "Current Bill: " << (*temp).getBill()<<"NIS\n";
     } else {
-        s1 << "Table " << tableId << " status: close\n";
+        s1 << "Table " << tableId << " status: closed\n";
         std::cout << s1.str();
     }
 
@@ -473,7 +473,7 @@ if(backup== nullptr){
 }
 
 std::string RestoreRestaurant::toString() const {
-    return "restore";
+    return "restore "+convertAction(this->getStatus());
 }
 RestoreRestaurant *RestoreRestaurant::clone() const {
     return new RestoreRestaurant(*this);
