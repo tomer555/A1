@@ -212,7 +212,8 @@ void MoveCustomer ::act(Restaurant &restaurant) {
     Customer *temp_c = (*temp_src).getCustomer(id);
     if (validTable(temp_src) && validTable(temp_dst) && //valid checks
         (*temp_src).isOpen() && (*temp_dst).isOpen() &&//open checks
-        validCustomer(temp_c, temp_src)) { //costumer check
+        (unsigned)(*temp_dst).getCapacity()>(*temp_dst).getCustomers().size()&&//capacity check
+        validCustomer(temp_c, temp_src)) { //customer check
         (*temp_dst).addCustomer(temp_c);//add customer to destination Table
         moveOrder(*temp_src, *temp_dst, id);
         (*temp_src).removeCustomer(id);
@@ -221,7 +222,7 @@ void MoveCustomer ::act(Restaurant &restaurant) {
         }
         this->complete();
     } else {
-        std::string output = "Cannot move Customer";
+        std::string output = "Cannot move customer";
         this->error(output);
         std::cout << output + "\n";
     }
@@ -307,22 +308,17 @@ Close * Close:: clone() const{
 
 //-----------------------------CloseAll------------------------------------------------------
 //Constructor Order
-CloseAll ::CloseAll(): BaseAction(){
-
-}
+CloseAll ::CloseAll(): BaseAction(){}
 
 void CloseAll ::act(Restaurant &restaurant) {
     std::vector<Table *> Table_vec = restaurant.getTables();
 //each table that is open will be closed and the bill will be printed in increasing order
     for (unsigned int i = 0; i < Table_vec.size(); i++) {
         if (Table_vec[i]->isOpen()) {
-            BaseAction *temp = new Close(i);
-            temp->act(restaurant);
-            delete temp;
+            std::cout << "Table " << i << " was closed. Bill " << Table_vec[i]->getBill() << "NIS\n";
+            Table_vec[i]->closeTable();
         }
         this->complete();
-        //restaurant need to be close now? or when we go back from the function
-
     }
 }
 
