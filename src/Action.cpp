@@ -430,12 +430,12 @@ BackupRestaurant::BackupRestaurant():BaseAction() {
 }
 
 void BackupRestaurant::act(Restaurant &restaurant) {
+    this->complete();
     if(backup== nullptr){
-        backup=new Restaurant(restaurant); //copy constructor
+        backup=new Restaurant (restaurant); //copy constructor
     } else {
         *backup = restaurant;// activating copy assignment
     }
-    this->complete();
 }
 
 
