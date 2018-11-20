@@ -36,13 +36,14 @@ Restaurant::Restaurant(const std::string &configFilePath):index(new int(0)),open
         }
     }
     if(!initilize.empty()) {
-        unsigned int numOfTables = atoi(initilize[0].c_str());
+        unsigned int numOfTables = std::stoi(initilize[0]);
         for (unsigned int i = 1; i < numOfTables + 1; i++) {
-            tables.push_back(new Table(atoi(initilize[i].c_str())));
+            tables.push_back(new Table(std::stoi(initilize[i])));
         }
+
         int dishid=0;
         for (unsigned int j = numOfTables + 1;j< initilize.size(); j=j+3) {
-            Dish d(dishid,initilize[j],atoi(initilize[j+2].c_str()),convertDish(initilize[j+1]));
+            Dish d(dishid,initilize[j],std::stoi(initilize[j+2]),convertDish(initilize[j+1]));
             menu.push_back(d);
 
             dishid++;
@@ -248,7 +249,7 @@ void Restaurant :: start() {
         switch (command) {
 
             case OPEN: {
-                int tableId = atoi(words[1].c_str());
+                int tableId = std::stoi(words[1]);
                 std::vector<Customer *> customers_temp;
                 for (unsigned int i = 2; i < words.size(); i = i + 2) {
                     Customer *temp = nullptr;
@@ -271,7 +272,7 @@ void Restaurant :: start() {
             }
 
             case ORDER : {
-                int tableId = atoi(words[1].c_str());
+                int tableId = std::stoi(words[1]);
                 BaseAction *temp = new Order(tableId);
                 (*temp).act(*this);
                 actionsLog.push_back(temp);
@@ -280,7 +281,7 @@ void Restaurant :: start() {
 
 
             case CLOSE: {
-                int tableId = atoi(words[1].c_str());
+                int tableId = std::stoi(words[1]);
                 BaseAction  *close_temp = new Close(tableId);
                 (*close_temp).act(*this);
                 actionsLog.push_back(close_temp);
@@ -289,9 +290,9 @@ void Restaurant :: start() {
             }
 
             case MOVE: {
-                int srcTableId = atoi(words[1].c_str());
-                int dstTableId = atoi(words[2].c_str());
-                int customerId = atoi(words[3].c_str());
+                int srcTableId = std::stoi(words[1]);
+                int dstTableId = std::stoi(words[2]);
+                int customerId = std::stoi(words[3]);
                 BaseAction  *move = new MoveCustomer(srcTableId, dstTableId, customerId);
                 move->act(*this);
                 actionsLog.push_back(move);
@@ -299,7 +300,7 @@ void Restaurant :: start() {
             }
 
             case STATUS: {
-                int tableId = atoi(words[1].c_str());
+                int tableId = std::stoi(words[1]);
                 BaseAction  *status = new PrintTableStatus(tableId);
                 status->act(*this);
                 actionsLog.push_back(status);
