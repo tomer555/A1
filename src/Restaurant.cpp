@@ -173,7 +173,7 @@ int Restaurant:: getNumOfTables() const{
 
 //iterates over Table vector and returns pointer to table that has 'ind' index
 Table* Restaurant:: getTable(int ind){
-   if(ind<0 || ind>getNumOfTables())
+   if(ind<0 || ind>getNumOfTables()-1)
        return nullptr;
 
     return tables[ind];

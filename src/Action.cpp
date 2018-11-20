@@ -52,7 +52,7 @@ std::string BaseAction::getActionArgs()const {
 
 bool BaseAction ::validTable(Table *table) const {
     bool output= true;
-    if(table== nullptr || !dynamic_cast<Table*>(table) ){//Pointer check and Type check Table
+    if(table== nullptr || !dynamic_cast<Table*>(table)){//Pointer check and Type check Table
         output= false;
     }
     return output;
@@ -210,7 +210,8 @@ void MoveCustomer ::act(Restaurant &restaurant) {
     Table *temp_src = restaurant.getTable(srcTable);
     Table *temp_dst = restaurant.getTable(dstTable);
     Customer *temp_c = (*temp_src).getCustomer(id);
-    if (validTable(temp_src) && validTable(temp_dst) && //valid checks
+    if (srcTable!=dstTable &&//the same table check
+        validTable(temp_src) && validTable(temp_dst) && //valid checks
         (*temp_src).isOpen() && (*temp_dst).isOpen() &&//open checks
         (unsigned)(*temp_dst).getCapacity()>(*temp_dst).getCustomers().size()&&//capacity check
         validCustomer(temp_c, temp_src)) { //customer check
