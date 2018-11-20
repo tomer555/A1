@@ -315,8 +315,8 @@ void Restaurant :: start() {
                 break;
             case BACKUP: {
                 BaseAction  *temp_backup = new BackupRestaurant();
-                actionsLog.push_back(temp_backup);
                 temp_backup->act(*this);
+                actionsLog.push_back(temp_backup);
 
                 break;
             }
